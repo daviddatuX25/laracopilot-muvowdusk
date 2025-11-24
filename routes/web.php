@@ -1,30 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\StockMovementController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\AlertController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminController;
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
-Route::resource('products', ProductController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('suppliers', SupplierController::class);
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
-Route::post('/stock-movements', [StockMovementController::class, 'store'])->name('stock-movements.store');
-Route::get('/stock-movements/create', [StockMovementController::class, 'create'])->name('stock-movements.create');
-
-Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-Route::get('/reports/summary', [ReportController::class, 'summary'])->name('reports.summary');
-Route::get('/reports/low-stock', [ReportController::class, 'lowStock'])->name('reports.low-stock');
-Route::get('/reports/movement-history', [ReportController::class, 'movementHistory'])->name('reports.movement-history');
-Route::get('/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export-pdf');
-
-Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
-Route::post('/alerts/{alert}/resolve', [AlertController::class, 'resolve'])->name('alerts.resolve');
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
+Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
+Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
