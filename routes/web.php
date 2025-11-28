@@ -12,9 +12,11 @@ use App\Livewire\Supplier\SupplierCreate;
 use App\Livewire\Supplier\SupplierEdit;
 
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-});
+// Public Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 Route::get('/categories', CategoryList::class)->name('categories.index');
 Route::get('/categories/create', CategoryCreate::class)->name('categories.create');
