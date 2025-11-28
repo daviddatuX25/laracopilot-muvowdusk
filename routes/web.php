@@ -16,6 +16,14 @@ Route::get('/', function () {
     return redirect()->route('products.index');
 });
 
+Route::get('/faq', function () {
+    return view('faq');
+})->name('faq');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 Route::get('/categories', CategoryList::class)->name('categories.index');
 Route::get('/categories/create', CategoryCreate::class)->name('categories.create');
 Route::get('/categories/{category}/edit', CategoryEdit::class)->name('categories.edit');
