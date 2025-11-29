@@ -95,21 +95,21 @@ class ProductEdit extends Component
     {
         // For now, handle the update locally with proper validation
         $product = Product::findOrFail($this->productId);
-        
+
         // Validate unique constraints at the database level
         $sku_exists = Product::where('sku', $this->sku)
             ->where('id', '!=', $this->productId)
             ->exists();
-        
+
         if ($sku_exists) {
             return ['success' => false, 'message' => 'SKU already exists'];
         }
-        
+
         $barcode_exists = Product::where('barcode', $this->barcode)
             ->where('id', '!=', $this->productId)
             ->where('barcode', '!=', null)
             ->exists();
-        
+
         if ($barcode_exists) {
             return ['success' => false, 'message' => 'Barcode already exists'];
         }

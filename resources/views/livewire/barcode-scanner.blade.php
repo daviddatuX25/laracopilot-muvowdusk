@@ -11,12 +11,12 @@
         <div id="scanner-status" class="mt-2 text-gray-600 text-sm"></div>
 
         <div class="flex gap-2 mt-4">
-            <button onclick="startZXingScanner()" 
+            <button onclick="startZXingScanner()"
                     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                 Start Scanner
             </button>
 
-            <button onclick="stopZXingScanner()" 
+            <button onclick="stopZXingScanner()"
                     class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                 Stop Scanner
             </button>
@@ -76,7 +76,7 @@ async function startZXingScanner() {
         }
 
         // Prefer back camera on mobile
-        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId 
+        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId
                          || cameras[0].deviceId;
 
         status.innerText = "📷 Camera active. Point at barcode...";
@@ -89,14 +89,14 @@ async function startZXingScanner() {
                 if (result) {
                     console.log("✓ Barcode detected:", result.text);
                     document.getElementById('scanner-status').innerText = "✓ Barcode: " + result.text;
-                    
+
                     // Fetch product data from API
                     try {
                         const response = await fetch(`/api/products/search?q=${encodeURIComponent(result.text)}`);
                         const data = await response.json();
-                        
+
                         console.log("API Response:", data);
-                        
+
                         if (data.product) {
                             console.log("Product found, dispatching event...");
                             // Dispatch to Livewire component with the barcode
@@ -110,7 +110,7 @@ async function startZXingScanner() {
                         console.error('Error fetching product:', err);
                         alert('Error searching product');
                     }
-                    
+
                     stopZXingScanner();
                 }
 

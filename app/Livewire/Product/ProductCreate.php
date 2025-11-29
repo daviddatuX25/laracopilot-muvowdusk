@@ -7,8 +7,10 @@ use App\Models\Product;
 use App\Models\Supplier;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ProductCreate extends Component
 {
@@ -39,6 +41,14 @@ class ProductCreate extends Component
         'current_stock' => 'required|integer|min:0',
         'image' => 'nullable|image|max:2048', // Max 2MB
     ];
+
+    public function mount(Request $request)
+    {
+        // Check if barcode is provided in query string
+        if ($request->has('barcode')) {
+            $this->barcode = $request->query('barcode');
+        }
+    }
 
     public function save()
     {
@@ -100,3 +110,4 @@ class ProductCreate extends Component
         ]);
     }
 }
+

@@ -8,72 +8,89 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                    <div class="mt-8 text-2xl">
-                        Stock Movement History
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">Stock Movement History</h3>
+                        <a href="{{ route('reports.index') }}" class="text-indigo-600 hover:text-indigo-900 text-sm">← Back to Dashboard</a>
                     </div>
 
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div>
-                            <label for="search" class="block text-gray-700 text-sm font-bold mb-2">Search Product:</label>
-                            <input type="text" id="search" wire:model.live.debounce.300ms="search" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Search by name, SKU or barcode">
-                        </div>
-                        <div>
-                            <label for="filterType" class="block text-gray-700 text-sm font-bold mb-2">Movement Type:</label>
-                            <select id="filterType" wire:model.live="filterType" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                <option value="">All</option>
-                                <option value="in">In</option>
-                                <option value="out">Out</option>
-                                <option value="adjustment">Adjustment</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="startDate" class="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
-                            <input type="date" id="startDate" wire:model.live="startDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                        <div>
-                            <label for="endDate" class="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
-                            <input type="date" id="endDate" wire:model.live="endDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <!-- Filters -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+                        <input type="text" 
+                            wire:model.live.debounce.300ms="search" 
+                            placeholder="Search product..." 
+                            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        
+                        <select wire:model.live="filterType" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                            <option value="">All Types</option>
+                            <option value="in">In</option>
+                            <option value="out">Out</option>
+                            <option value="adjustment">Adjustment</option>
+                        </select>
+
+                        <input type="date" 
+                            wire:model.live="startDate" 
+                            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+
+                        <input type="date" 
+                            wire:model.live="endDate" 
+                            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+
+                        <div class="flex gap-2">
+                            <button wire:click="exportPdf" class="flex-1 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 text-xs font-semibold">PDF</button>
+                            <button wire:click="exportCsv" class="flex-1 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 text-xs font-semibold">CSV</button>
                         </div>
                     </div>
 
-                    <div class="mt-6">
-                        <button wire:click="exportPdf" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:border-red-700 focus:shadow-outline-red disabled:opacity-25 transition ease-in-out duration-150">
-                            Export as PDF
-                        </button>
-                    </div>
-
-                    <div class="mt-4 text-gray-500">
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
                         @if ($movements->isEmpty())
-                            <p>No stock movements found with the selected filters.</p>
+                            <div class="p-6 text-center text-gray-500">
+                                <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <p>No movements found.</p>
+                            </div>
                         @else
-                            <table class="table-auto w-full mt-4">
-                                <thead>
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b">
                                     <tr>
-                                        <th class="px-4 py-2">Date</th>
-                                        <th class="px-4 py-2">Product</th>
-                                        <th class="px-4 py-2">Type</th>
-                                        <th class="px-4 py-2">Quantity</th>
-                                        <th class="px-4 py-2">Old Stock</th>
-                                        <th class="px-4 py-2">New Stock</th>
-                                        <th class="px-4 py-2">Reason</th>
+                                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Date & Time</th>
+                                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Product</th>
+                                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Type</th>
+                                        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-700">Qty</th>
+                                        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-700">Before</th>
+                                        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-700">After</th>
+                                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Reason</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($movements as $movement)
-                                        <tr>
-                                            <td class="border px-4 py-2">{{ $movement->created_at->format('Y-m-d H:i:s') }}</td>
-                                            <td class="border px-4 py-2">{{ $movement->product->name }}</td>
-                                            <td class="border px-4 py-2">{{ ucwords($movement->type) }}</td>
-                                            <td class="border px-4 py-2">{{ $movement->quantity }}</td>
-                                            <td class="border px-4 py-2">{{ $movement->old_stock }}</td>
-                                            <td class="border px-4 py-2">{{ $movement->new_stock }}</td>
-                                            <td class="border px-4 py-2">{{ $movement->reason }}</td>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-4 py-2 text-sm text-gray-600">
+                                                <div>{{ $movement->created_at->format('M d, Y') }}</div>
+                                                <div class="text-xs text-gray-500">{{ $movement->created_at->format('H:i:s') }}</div>
+                                            </td>
+                                            <td class="px-4 py-2 text-sm font-medium">{{ $movement->product->name }}</td>
+                                            <td class="px-4 py-2 text-sm">
+                                                <span class="inline-flex px-2 py-1 rounded-full text-xs font-semibold
+                                                    @if($movement->type === 'in') bg-green-100 text-green-800
+                                                    @elseif($movement->type === 'out') bg-red-100 text-red-800
+                                                    @else bg-blue-100 text-blue-800
+                                                    @endif">
+                                                    {{ ucfirst($movement->type) }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-2 text-sm text-center font-semibold">{{ $movement->quantity }}</td>
+                                            <td class="px-4 py-2 text-sm text-center">{{ $movement->old_stock }}</td>
+                                            <td class="px-4 py-2 text-sm text-center font-semibold text-indigo-600">{{ $movement->new_stock }}</td>
+                                            <td class="px-4 py-2 text-sm text-gray-600">{{ $movement->reason ?? '-' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="mt-4">
+
+                            <div class="p-4">
                                 {{ $movements->links() }}
                             </div>
                         @endif

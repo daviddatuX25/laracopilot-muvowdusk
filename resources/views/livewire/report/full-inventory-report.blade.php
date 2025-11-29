@@ -13,14 +13,11 @@
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-2xl font-bold text-gray-800">Inventory Summary</h3>
                         <div class="flex gap-2 no-print">
-                            <button onclick="window.print()" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
-                                🖨️ Print Report
+                            <button wire:click="exportPdf" class="px-6 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition">
+                                📄 Export PDF
                             </button>
                             <button wire:click="exportCsv" class="px-6 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition">
                                 📥 Export CSV
-                            </button>
-                            <button wire:click="exportExcel" class="px-6 py-2 bg-orange-600 text-white font-semibold rounded hover:bg-orange-700 transition">
-                                📊 Export Report
                             </button>
                         </div>
                     </div>
@@ -63,7 +60,7 @@
                         <!-- Search -->
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Search</label>
-                            <input type="text" 
+                            <input type="text"
                                    wire:model.live="search"
                                    placeholder="Name, SKU, or Barcode..."
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -178,15 +175,15 @@
                             @forelse($products as $product)
                                 @php
                                     $totalValue = $product->current_stock * $product->cost_price;
-                                    $statusClass = $product->current_stock <= 0 
-                                        ? 'bg-red-50 text-red-700' 
-                                        : ($product->current_stock <= $product->reorder_level 
-                                            ? 'bg-yellow-50 text-yellow-700' 
+                                    $statusClass = $product->current_stock <= 0
+                                        ? 'bg-red-50 text-red-700'
+                                        : ($product->current_stock <= $product->reorder_level
+                                            ? 'bg-yellow-50 text-yellow-700'
                                             : 'bg-green-50 text-green-700');
-                                    $statusText = $product->current_stock <= 0 
-                                        ? 'Out' 
-                                        : ($product->current_stock <= $product->reorder_level 
-                                            ? 'Low' 
+                                    $statusText = $product->current_stock <= 0
+                                        ? 'Out'
+                                        : ($product->current_stock <= $product->reorder_level
+                                            ? 'Low'
                                             : 'OK');
                                 @endphp
                                 <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
@@ -339,7 +336,7 @@
 
 @push('scripts')
 <style media="print">
-    .no-print, 
+    .no-print,
     .no-print * {
         display: none !important;
     }

@@ -1,4 +1,13 @@
-<div>
+<div x-data="{
+    scannerOpen: false,
+    init() {
+        this.$watch('scannerOpen', (value) => {
+            if (!value) {
+                stopZXingScanner();
+            }
+        });
+    }
+}">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Stock Adjustment') }}
@@ -15,47 +24,104 @@
 
                     <form wire:submit.prevent="adjustStock" class="mt-6">
                         <!-- Product Selection Section -->
-                        <div class="mb-6 p-4 border rounded bg-blue-50">
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <button type="button" wire:click="toggleVideoScanner" class="inline-flex items-center px-4 py-2 {{ $useVideoScanner ? 'bg-red-500 hover:bg-red-600' : 'bg-purple-500 hover:bg-purple-600' }} border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:shadow-outline disabled:opacity-25 transition ease-in-out duration-150">
-                                    {{ $useVideoScanner ? '✓ Camera Scanner Active' : '📷 Camera Scanner' }}
-                                </button>
+                        <div class="mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <!-- Scanner Toggle -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">Scanner</label>
+                                    <button type="button" @click="scannerOpen = !scannerOpen" class="relative z-10 w-full inline-flex items-center justify-center px-6 py-3" :class="scannerOpen ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg focus:ring-red-500' : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow focus:ring-purple-500'" class="border border-transparent rounded-lg font-semibold text-sm text-white uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150 pointer-events-auto">
+                                        <template x-if="scannerOpen">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                Disable Scanner
+                                            </span>
+                                        </template>
+                                        <template x-if="!scannerOpen">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                                                Enable Scanner
+                                            </span>
+                                        </template>
+                                    </button>
+                                </div>
+
+                                <!-- Manual Search -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">Manual Search</label>
+                                    <input type="text" id="search" wire:model.debounce-500ms="search" placeholder="Search by name, SKU or barcode..." class="w-full px-4 py-3 border-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-lg shadow-sm font-medium placeholder-gray-400 transition duration-200">
+                                    @error('selectedProductId') <span class="text-red-500 text-xs italic mt-1 block">{{ $message }}</span> @enderror
+                                </div>
                             </div>
 
-                            @if($useVideoScanner)
-                                <!-- Video Scanner Section -->
-                                <div class="mb-4 p-3 border-2 border-purple-300 rounded bg-purple-50" wire:ignore>
-                                    <video id="qr-video" width="100%" height="300" class="border rounded bg-black"></video>
-                                    <div id="scanner-status" class="mt-3 text-center text-gray-700 font-bold">📷 Camera active. Point at barcode...</div>
-                                    <div class="flex gap-2 justify-center mt-3">
-                                        <button type="button" onclick="startZXingScanner()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold">Start Scanner</button>
-                                        <button type="button" onclick="stopZXingScanner()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-semibold">Stop Scanner</button>
+                            <!-- Video Scanner Section -->
+                            <div x-show="scannerOpen" class="mb-6 bg-gradient-to-br from-gray-900 to-gray-800 p-4 border-2 border-purple-400 rounded-xl shadow-2xl overflow-hidden">
+                                    <div class="relative w-full bg-black rounded-lg overflow-hidden" style="aspect-ratio: 4/3;">
+                                        <video id="qr-video" wire:ignore class="w-full h-full object-cover"></video>
+
+                                        <!-- Scanning Guide Overlay -->
+                                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <div class="relative w-64 h-48 border-4 border-yellow-400 rounded-2xl shadow-inner" style="box-shadow: inset 0 0 20px rgba(250, 204, 21, 0.3);">
+                                                <div class="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-yellow-400"></div>
+                                                <div class="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-yellow-400"></div>
+                                                <div class="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-yellow-400"></div>
+                                                <div class="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-yellow-400"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status Badge -->
+                                        <div class="absolute top-4 right-4">
+                                            <div class="flex items-center gap-2 bg-black/70 backdrop-blur px-3 py-2 rounded-full">
+                                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                <span class="text-xs font-semibold text-white">Scanning</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Scanner Status Message -->
+                                    <div class="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                                        <p id="scanner-status" class="text-center text-sm font-medium text-purple-800">📷 Position barcode in the frame to scan...</p>
+                                    </div>
+
+                                    <!-- Camera Controls -->
+                                    <div class="flex gap-3 justify-center mt-4">
+                                        <button type="button" onclick="startZXingScanner()" class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                                            Start
+                                        </button>
+                                        <button type="button" onclick="stopZXingScanner()" class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-lg shadow-md transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm6 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+                                            Stop
+                                        </button>
                                     </div>
                                 </div>
-                            @elseif($showManualInput)
-                                <div class="mb-4">
-                                    <label for="barcodeInput" class="block text-gray-700 text-sm font-bold mb-2">Scan or Enter Barcode/SKU:</label>
+                            </div>
+
+                            <!-- Manual Barcode Input Section -->
+                            @if($showManualInput && !$useVideoScanner)
+                                <div class="mb-6 p-4 border-2 border-blue-300 rounded-lg bg-blue-50 shadow-sm">
+                                    <label for="barcodeInput" class="block text-gray-700 text-sm font-semibold mb-3">Enter Barcode/SKU:</label>
                                     <div class="flex gap-2">
-                                        <input type="text" id="barcodeInput" wire:model="barcodeInput" placeholder="Point camera here or type barcode/SKU..." autofocus class="shadow appearance-none border rounded flex-1 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                        <button type="button" wire:click="searchByBarcode" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                        <input type="text" id="barcodeInput" wire:model="barcodeInput" placeholder="Scan or type barcode/SKU..." autofocus class="flex-1 px-4 py-2 border-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-lg font-medium transition duration-200">
+                                        <button type="button" wire:click="searchByBarcode" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                             Search
                                         </button>
                                     </div>
                                 </div>
-                            @else
-                                <label for="search" class="block text-gray-700 text-sm font-bold mb-2">Search Product (Manual):</label>
-                                <input type="text" id="search" wire:model.live="search" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Search by name, SKU or barcode">
-                                @error('selectedProductId') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                                @if(!empty($search) && empty($selectedProduct) && count($products) > 0)
-                                    <ul class="border border-gray-300 rounded mt-2 max-h-48 overflow-y-scroll bg-white">
-                                        @foreach($products as $product)
-                                            <li wire:click="selectProduct({{ $product->id }})" class="p-2 cursor-pointer hover:bg-gray-200 flex justify-between">
-                                                <span>{{ $product->name }} (SKU: {{ $product->sku }})</span>
-                                                <span class="text-gray-600">Stock: {{ $product->current_stock }}</span>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @endif
+                            @endif
+
+                            <!-- Search Results Dropdown -->
+                            @if(!empty($search) && empty($selectedProduct) && count($products) > 0)
+                                <ul class="mb-6 border-2 border-blue-300 rounded-lg shadow-lg bg-white overflow-hidden max-h-64 overflow-y-auto z-10 relative">
+                                    @foreach($products as $product)
+                                        <li wire:click="selectProduct({{ $product->id }})" class="p-4 border-b last:border-b-0 hover:bg-blue-50 cursor-pointer transition flex justify-between items-center group">
+                                            <div class="flex-1">
+                                                <p class="font-bold text-gray-900 group-hover:text-blue-600 transition">{{ $product->name }}</p>
+                                                <p class="text-xs text-gray-500">SKU: {{ $product->sku }}</p>
+                                            </div>
+                                            <span class="bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1 rounded-full">Stock: {{ $product->current_stock }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </div>
 
@@ -112,7 +178,7 @@
                                         </button>
                                     @endforeach
                                 </div>
-                                
+
                                 <div>
                                     <label for="customQuantity" class="text-gray-700 text-sm font-bold">Custom Quantity:</label>
                                     <div class="flex gap-2">
@@ -186,6 +252,14 @@ async function startZXingScanner() {
     status.innerText = "Initializing camera…";
 
     try {
+        // Check if mediaDevices is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+            status.innerText = "❌ Camera access not available on this device/connection.";
+            console.error("mediaDevices not supported");
+            isScanning = false;
+            return;
+        }
+
         if (!zxingReader) {
             zxingReader = new ZXing.BrowserMultiFormatReader();
             console.log("ZXing reader initialized");
@@ -202,7 +276,7 @@ async function startZXingScanner() {
         }
 
         // Prefer back camera on mobile
-        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId 
+        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId
                          || cameras[0].deviceId;
 
         status.innerText = "📷 Camera active. Point at barcode...";
@@ -215,12 +289,17 @@ async function startZXingScanner() {
                 if (result) {
                     console.log("✓ Barcode detected:", result.text);
                     document.getElementById('scanner-status').innerText = "✓ Barcode: " + result.text;
-                    
+
                     // Dispatch to Livewire component with the barcode
-                    Livewire.dispatch('barcodeDetected', { barcode: result.text });
-                    console.log("Event dispatched!");
-                    
-                    // Keep camera running
+                    if (window.Livewire) {
+                        Livewire.dispatch('barcodeDetected', { barcode: result.text });
+                        console.log("Event dispatched!");
+                    } else {
+                        console.warn("Livewire not available yet");
+                    }
+
+                    // Stop scanner after successful scan
+                    stopZXingScanner();
                 }
 
                 if (error && error.name !== 'NotFoundException') {
@@ -231,7 +310,14 @@ async function startZXingScanner() {
 
     } catch (error) {
         console.error("Scanner error:", error);
-        status.innerText = "❌ Error: " + error.message;
+        const status = document.getElementById('scanner-status');
+        if (error.message.includes('Permission denied')) {
+            status.innerText = "❌ Camera permission denied. Please enable camera access in settings.";
+        } else if (error.message.includes('enumerateDevices')) {
+            status.innerText = "❌ Camera access not available. Ensure you're on HTTPS.";
+        } else {
+            status.innerText = "❌ Error: " + error.message;
+        }
         isScanning = false;
     }
 }
@@ -251,11 +337,17 @@ async function stopZXingScanner() {
         console.error("Error stopping scanner:", error);
     }
 
-    status.innerText = "Scanner stopped.";
+    if (status) {
+        status.innerText = "Scanner stopped.";
+    }
 }
+
+// Auto-stop on Livewire navigation or page unload
+document.addEventListener('livewire:navigated', stopZXingScanner);
+window.addEventListener('beforeunload', stopZXingScanner);
 </script>
 @endpush
-    
+
 @push('scripts')
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -268,6 +360,12 @@ async function stopZXingScanner() {
                     }
                 });
             }
+
+            // Listen for stopScanner event
+            Livewire.on('stopScanner', () => {
+                stopZXingScanner();
+            });
         });
     </script>
 @endpush
+</div>

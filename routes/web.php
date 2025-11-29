@@ -12,13 +12,8 @@ use App\Livewire\Supplier\SupplierCreate;
 use App\Livewire\Supplier\SupplierEdit;
 
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-});
+Route::get('/', \App\Livewire\Dashboard::class)->name('dashboard');
 
-Route::get('/faq', function () {
-    return view('faq');
-})->name('faq');
 
 Route::get('/about', function () {
     return view('about');
@@ -41,7 +36,7 @@ Route::get('/barcode-scan', \App\Livewire\BarcodeScanner::class)->name('barcode.
 
 Route::get('/stock-movements/adjust', \App\Livewire\Stock\StockAdjustment::class)->name('stock-movements.adjust');
 
-Route::get('/reports/summary', \App\Livewire\Report\SummaryReport::class)->name('reports.summary');
+Route::get('/reports', \App\Livewire\Report\ReportDashboard::class)->name('reports.index');
 Route::get('/reports/low-stock', \App\Livewire\Report\LowStockReport::class)->name('reports.low-stock');
 Route::get('/reports/movement-history', \App\Livewire\Report\MovementHistoryReport::class)->name('reports.movement-history');
 Route::get('/reports/full-inventory', \App\Livewire\Report\FullInventoryReport::class)->name('reports.full-inventory');
@@ -52,7 +47,7 @@ Route::get('/alerts', \App\Livewire\AlertsList::class)->name('alerts.index');
 Route::get('/api/products/search', function (\Illuminate\Http\Request $request) {
     $q = $request->query('q');
     $product = \App\Models\Product::where('barcode', $q)->orWhere('sku', $q)->first();
-    
+
     if ($product) {
         return response()->json([
             'product' => [
@@ -67,6 +62,6 @@ Route::get('/api/products/search', function (\Illuminate\Http\Request $request) 
             ]
         ]);
     }
-    
+
     return response()->json(['product' => null], 404);
 });

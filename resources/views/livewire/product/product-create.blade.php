@@ -7,11 +7,11 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                    <h1 class="text-2xl font-semibold text-gray-800">Create New Product</h1>
+            <div class="bg-white overflow-hidden rounded-lg shadow-md">
+                <div class="p-6">
+                    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Create New Product</h1>
 
-                    <form wire:submit.prevent="save" class="mt-6 space-y-6">
+                    <form wire:submit.prevent="save" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
@@ -59,14 +59,14 @@
                                 @error('supplier_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="cost_price" class="block text-sm font-medium text-gray-700">Cost Price</label>
+                                <label for="cost_price" class="block text-sm font-medium text-gray-700">Cost Price (₱)</label>
                                 <div class="mt-1">
                                     <input type="number" step="0.01" id="cost_price" wire:model.lazy="cost_price" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 </div>
                                 @error('cost_price') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="selling_price" class="block text-sm font-medium text-gray-700">Selling Price</label>
+                                <label for="selling_price" class="block text-sm font-medium text-gray-700">Selling Price (₱)</label>
                                 <div class="mt-1">
                                     <input type="number" step="0.01" id="selling_price" wire:model.lazy="selling_price" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 </div>

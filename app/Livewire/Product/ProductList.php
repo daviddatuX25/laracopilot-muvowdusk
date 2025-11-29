@@ -5,7 +5,7 @@ namespace App\Livewire\Product;
 use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On; 
+use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Storage;
 
 class ProductList extends Component

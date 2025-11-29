@@ -6,9 +6,11 @@ use App\Models\Alert;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
+#[Layout('layouts.app')]
 class StockAdjustment extends Component
 {
     public $showManualInput = false; // toggle manual input mode
@@ -38,7 +40,7 @@ class StockAdjustment extends Component
             $this->products = [];
             return;
         }
-        
+
         $this->products = Product::where('name', 'like', '%' . $this->search . '%')
             ->orWhere('sku', 'like', '%' . $this->search . '%')
             ->orWhere('barcode', 'like', '%' . $this->search . '%')
@@ -77,11 +79,26 @@ class StockAdjustment extends Component
     public function toggleVideoScanner()
     {
         $this->useVideoScanner = !$this->useVideoScanner;
+
+        // If disabling, dispatch event to stop scanner
+        if (!$this->useVideoScanner) {
+            $this->dispatch('stopScanner');
+        }
     }
 
     #[On('barcodeDetected')]
     public function handleBarcodeDetected($barcode)
     {
+        // Handle both array and string parameters
+        if (is_array($barcode)) {
+            $barcode = $barcode['barcode'] ?? null;
+        }
+
+        if (!$barcode) {
+            $this->dispatch('toast', type: 'error', message: 'Invalid barcode');
+            return;
+        }
+
         $product = Product::where('barcode', $barcode)
             ->orWhere('sku', $barcode)
             ->first();
@@ -162,15 +179,19 @@ class StockAdjustment extends Component
     private function checkAndCreateAlerts(Product $product)
     {
         if ($product->current_stock <= $product->reorder_level && $product->current_stock > 0) {
-            Alert::firstOrCreate(
+            $alert = Alert::firstOrCreate(
                 ['product_id' => $product->id, 'type' => 'low_stock', 'status' => 'pending'],
                 ['message' => 'Product ' . $product->name . ' is running low on stock. Current stock: ' . $product->current_stock . ', Reorder level: ' . $product->reorder_level . '.']
             );
+            // Broadcast new alert event
+            $this->dispatch('new-alert', type: 'low_stock', productName: $product->name);
         } elseif ($product->current_stock <= 0) {
-            Alert::firstOrCreate(
+            $alert = Alert::firstOrCreate(
                 ['product_id' => $product->id, 'type' => 'out_of_stock', 'status' => 'pending'],
                 ['message' => 'Product ' . $product->name . ' is out of stock.']
             );
+            // Broadcast new alert event
+            $this->dispatch('new-alert', type: 'out_of_stock', productName: $product->name);
         } else {
             Alert::where('product_id', $product->id)
                 ->whereIn('type', ['low_stock', 'out_of_stock'])

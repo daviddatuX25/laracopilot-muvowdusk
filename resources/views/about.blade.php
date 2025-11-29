@@ -1,19 +1,17 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-900">About Us</h1>
-        <p class="mt-2 text-lg text-gray-600">Meet the team behind the Inventory Management System</p>
-    </div>
+<x-app-layout>
+    <div class="space-y-6">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">About Us</h1>
+            <p class="mt-2 text-lg text-gray-600">Meet the team behind the Inventory Management System</p>
+        </div>
 
     <!-- Mission Section -->
     <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-indigo-600">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
         <p class="text-gray-700 leading-relaxed">
-            We are committed to providing a simple, efficient, and reliable inventory management system that helps businesses 
-            track their products, manage stock levels, and maintain accurate records. Our goal is to make inventory management 
+            We are committed to providing a simple, efficient, and reliable inventory management system that helps businesses
+            track their products, manage stock levels, and maintain accurate records. Our goal is to make inventory management
             accessible to everyone, from small retailers to warehouse operators.
         </p>
     </div>
@@ -111,13 +109,13 @@
     <!-- Team Section -->
     <div class="bg-white rounded-lg shadow-md p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-8">Our Team</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Team Member 1 -->
             <div class="text-center">
                 <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    DJ
+                    DD
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900">David Juma</h3>
+                <h3 class="text-xl font-semibold text-gray-900">David Datu Sarmiento</h3>
                 <p class="text-indigo-600 font-medium">Lead Developer</p>
                 <p class="text-gray-600 mt-2 text-sm">Full-stack developer with expertise in Laravel and modern web technologies.</p>
             </div>
@@ -125,51 +123,31 @@
             <!-- Team Member 2 -->
             <div class="text-center">
                 <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    EE
+                    CL
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900">Ella Estrella</h3>
-                <p class="text-indigo-600 font-medium">Product Designer</p>
+                <h3 class="text-xl font-semibold text-gray-900">Christine Lopez</h3>
+                <p class="text-indigo-600 font-medium">Designer</p>
                 <p class="text-gray-600 mt-2 text-sm">Creative designer focused on user experience and intuitive interfaces.</p>
             </div>
 
             <!-- Team Member 3 -->
             <div class="text-center">
                 <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    JK
+                    PH
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900">John Kinyua</h3>
-                <p class="text-indigo-600 font-medium">Quality Assurance</p>
-                <p class="text-gray-600 mt-2 text-sm">Ensures system reliability and handles comprehensive testing across all features.</p>
+                <h3 class="text-xl font-semibold text-gray-900">Peter John Haboc</h3>
+                <p class="text-indigo-600 font-medium">Database Administrator</p>
+                <p class="text-gray-600 mt-2 text-sm">Specializes in database architecture and optimization.</p>
             </div>
 
             <!-- Team Member 4 -->
             <div class="text-center">
                 <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    SM
+                    AA
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900">Sarah Mwangi</h3>
-                <p class="text-indigo-600 font-medium">Backend Engineer</p>
-                <p class="text-gray-600 mt-2 text-sm">Database architecture and API development specialist.</p>
-            </div>
-
-            <!-- Team Member 5 -->
-            <div class="text-center">
-                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    MK
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900">Michael Kipchoge</h3>
-                <p class="text-indigo-600 font-medium">Frontend Developer</p>
-                <p class="text-gray-600 mt-2 text-sm">Specializes in responsive design and interactive user interfaces.</p>
-            </div>
-
-            <!-- Team Member 6 -->
-            <div class="text-center">
-                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                    PN
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900">Patricia Njeri</h3>
-                <p class="text-indigo-600 font-medium">Product Manager</p>
-                <p class="text-gray-600 mt-2 text-sm">Drives product strategy and ensures alignment with user needs.</p>
+                <h3 class="text-xl font-semibold text-gray-900">Albrix Astro</h3>
+                <p class="text-indigo-600 font-medium">System Administrator</p>
+                <p class="text-gray-600 mt-2 text-sm">Manages system deployment, maintenance, and infrastructure.</p>
             </div>
         </div>
     </div>
@@ -230,13 +208,9 @@
             Have questions about our inventory management system? We'd love to hear from you!
         </p>
         <div class="mt-6 flex gap-4">
-            <a href="{{ route('faq') }}" class="inline-block px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
-                Check FAQ
-            </a>
-            <a href="{{ route('products.index') }}" class="inline-block px-6 py-2 bg-white text-indigo-600 font-semibold rounded-lg border border-indigo-600 hover:bg-indigo-50 transition">
+            <a href="{{ route('dashboard') }}" class="inline-block px-6 py-2 bg-white text-indigo-600 font-semibold rounded-lg border border-indigo-600 hover:bg-indigo-50 transition">
                 Back to System
             </a>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

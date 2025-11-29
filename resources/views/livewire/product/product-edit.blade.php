@@ -59,14 +59,14 @@
                                 @error('supplier_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="cost_price" class="block text-sm font-medium text-gray-700">Cost Price</label>
+                                <label for="cost_price" class="block text-sm font-medium text-gray-700">Cost Price (₱)</label>
                                 <div class="mt-1">
                                     <input type="number" step="0.01" id="cost_price" wire:model="cost_price" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 </div>
                                 @error('cost_price') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="selling_price" class="block text-sm font-medium text-gray-700">Selling Price</label>
+                                <label for="selling_price" class="block text-sm font-medium text-gray-700">Selling Price (₱)</label>
                                 <div class="mt-1">
                                     <input type="number" step="0.01" id="selling_price" wire:model="selling_price" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 </div>
