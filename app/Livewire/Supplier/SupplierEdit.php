@@ -30,7 +30,7 @@ class SupplierEdit extends Component
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('suppliers')->ignore($this->supplier?->id)],
             'contact_person' => 'nullable|string|max:255',
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('suppliers')->ignore($this->supplier?->id)],
+            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
         ];

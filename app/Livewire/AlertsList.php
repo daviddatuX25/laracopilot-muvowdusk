@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Alert;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
@@ -19,9 +20,19 @@ class AlertsList extends Component
 
     public function render()
     {
+        $inventoryId = AuthHelper::inventory();
+
         return view('livewire.alerts-list', [
-            'alerts' => Alert::with('product')->where('status', 'pending')->orderBy('created_at', 'desc')->paginate(10),
-            'totalPending' => Alert::where('status', 'pending')->count(),
+            'alerts' => Alert::with('product')
+                ->whereHas('product', function ($q) use ($inventoryId) {
+                    $q->where('inventory_id', $inventoryId);
+                })
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10),
+            'totalPending' => Alert::whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            })->where('status', 'pending')->count(),
         ]);
     }
 

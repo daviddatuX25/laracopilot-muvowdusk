@@ -15,12 +15,12 @@
                     </div>
 
                     <!-- Filters -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <input type="text" 
-                            wire:model.live="search" 
-                            placeholder="Search by name or SKU..." 
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                        <input type="text"
+                            wire:model.live="search"
+                            placeholder="Search by name or SKU..."
                             class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        
+
                         <select wire:model.live="filterCategory" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             <option value="">All Categories</option>
                             @foreach($categories as $cat)
@@ -35,7 +35,7 @@
                             @endforeach
                         </select>
 
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 md:col-span-3 lg:col-span-1">
                             <button wire:click="exportPdf" class="flex-1 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 text-sm font-semibold">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M5.5 13a3 3 0 01-.369-5.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"/>

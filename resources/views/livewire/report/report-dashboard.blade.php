@@ -25,7 +25,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-600 text-sm font-medium">Total Stock Value</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($stats['total_stock_value'], 2) }}</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">₱{{ number_format($stats['total_stock_value'], 2) }}</p>
                         </div>
                         <svg class="w-12 h-12 text-green-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M8.16 5a.5.5 0 100 1H12c2.485 0 4.5 1.879 4.5 4.21V12a.5.5 0 00-1 0v-1.79C15.5 8.042 14.053 7 12 7H8.16a.5.5 0 000 1H12c1.933 0 3.5 1.343 3.5 3s-1.567 3-3.5 3H2a.5.5 0 000 1h10c2.15 0 3.957-1.42 3.957-3.21a4.02 4.02 0 00-.04-.464l1.261-2.19a.5.5 0 00-.816-.612l-1.242 2.152C14.859 8.03 13.604 7 12 7H8.16a.5.5 0 000 1H12c1.933 0 3.5 1.343 3.5 3s-1.567 3-3.5 3H2a.5.5 0 000 1h10c2.485 0 4.5-1.879 4.5-4.21V8.21C16.5 6.879 15.485 5 13 5H8.16z"/>

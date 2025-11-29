@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
@@ -26,15 +27,17 @@ class SummaryReport extends Component
 
     public function loadSummaryData()
     {
-        $this->totalProducts = Product::count();
-        $this->totalCategories = Category::count();
-        $this->totalSuppliers = Supplier::count();
-        $this->totalStockValue = Product::sum(DB::raw('current_stock * cost_price'));
-        $this->totalStockUnits = Product::sum('current_stock');
-        $this->lowStockCount = Product::whereColumn('current_stock', '<=', 'reorder_level')
+        $inventoryId = AuthHelper::inventory();
+
+        $this->totalProducts = Product::where('inventory_id', $inventoryId)->count();
+        $this->totalCategories = Category::where('inventory_id', $inventoryId)->count();
+        $this->totalSuppliers = Supplier::where('inventory_id', $inventoryId)->count();
+        $this->totalStockValue = Product::where('inventory_id', $inventoryId)->sum(DB::raw('current_stock * cost_price'));
+        $this->totalStockUnits = Product::where('inventory_id', $inventoryId)->sum('current_stock');
+        $this->lowStockCount = Product::where('inventory_id', $inventoryId)->whereColumn('current_stock', '<=', 'reorder_level')
             ->where('current_stock', '>', 0)->count();
-        $this->outOfStockCount = Product::where('current_stock', '<=', 0)->count();
-        $this->normalStockCount = Product::where('current_stock', '>', 0)
+        $this->outOfStockCount = Product::where('inventory_id', $inventoryId)->where('current_stock', '<=', 0)->count();
+        $this->normalStockCount = Product::where('inventory_id', $inventoryId)->where('current_stock', '>', 0)
             ->whereRaw('current_stock > reorder_level')->count();
     }
 
@@ -66,7 +69,7 @@ class SummaryReport extends Component
                     ['Metric' => 'Total Categories', 'Value' => $this->totalCategories],
                     ['Metric' => 'Total Suppliers', 'Value' => $this->totalSuppliers],
                     ['Metric' => 'Total Stock Units', 'Value' => $this->totalStockUnits],
-                    ['Metric' => 'Total Stock Value', 'Value' => '$' . number_format($this->totalStockValue, 2)],
+                    ['Metric' => 'Total Stock Value', 'Value' => '₱' . number_format($this->totalStockValue, 2)],
                 ],
             ],
             [

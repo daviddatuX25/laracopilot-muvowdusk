@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Alert;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\Attributes\On;
 
@@ -22,15 +23,27 @@ class NotificationCenter extends Component
     #[On('alert-seen')]
     public function loadNotifications()
     {
+        $inventoryId = AuthHelper::inventory();
+
         $this->notifications = Alert::where('status', 'pending')
             ->with('product')
+            ->whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            })
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        $this->totalCount = Alert::where('status', 'pending')->count();
+        $this->totalCount = Alert::where('status', 'pending')
+            ->whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            })->count();
+
         $this->unseenCount = Alert::where('status', 'pending')
             ->whereNull('seen_at')
+            ->whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            })
             ->count();
     }
 

@@ -58,7 +58,7 @@
         </div>
         <div class="summary-row">
             <strong>Total Stock Value:</strong>
-            <span>${{ number_format($totalStockValue, 2) }}</span>
+            <span>₱{{ number_format($totalStockValue, 2) }}</span>
         </div>
     </div>
 </body>

@@ -35,7 +35,7 @@
                                 @error('barcode') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
+                                <label for="category_id" class="block text-sm font-medium text-gray-700">Category <span class="text-gray-500">(optional)</span></label>
                                 <div class="mt-1">
                                     <select id="category_id" wire:model="category_id" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">Select Category</option>
@@ -47,7 +47,7 @@
                                 @error('category_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label for="supplier_id" class="block text-sm font-medium text-gray-700">Supplier</label>
+                                <label for="supplier_id" class="block text-sm font-medium text-gray-700">Supplier <span class="text-gray-500">(optional)</span></label>
                                 <div class="mt-1">
                                     <select id="supplier_id" wire:model="supplier_id" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">Select Supplier</option>
@@ -89,16 +89,21 @@
                             <div>
                                 <label for="image" class="block text-sm font-medium text-gray-700">Product Image (optional)</label>
                                 <div class="mt-1">
-                                    <input type="file" id="image" wire:model="image" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <input type="file" id="image" wire:model="image" accept="image/*;capture=environment" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <p class="text-xs text-gray-500 mt-1">📷 Tap on mobile to take a photo or upload an image</p>
                                 </div>
                                 @error('image') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                                @if ($old_image_path)
-                                    <p class="text-sm text-gray-500 mt-2">Current Image:</p>
-                                    <img src="{{ asset('storage/' . $old_image_path) }}" alt="Current Product Image" class="w-20 h-20 object-cover rounded-full mt-1">
-                                @endif
+
                                 @if ($image)
-                                    <p class="text-sm text-gray-500 mt-2">New Image Preview:</p>
-                                    <img src="{{ $image->temporaryUrl() }}" alt="New Product Image Preview" class="w-20 h-20 object-cover rounded-full mt-1">
+                                    <div class="mt-3">
+                                        <p class="text-sm font-medium text-gray-700 mb-2">New Image Preview:</p>
+                                        <img src="{{ $image->temporaryUrl() }}" alt="New Product Image Preview" class="w-32 h-32 object-cover rounded-lg shadow-md">
+                                    </div>
+                                @elseif ($old_image_path)
+                                    <div class="mt-3">
+                                        <p class="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
+                                        <img src="{{ asset('storage/' . $old_image_path) }}" alt="Current Product Image" class="w-32 h-32 object-cover rounded-lg shadow-md">
+                                    </div>
                                 @endif
                             </div>
                         </div>

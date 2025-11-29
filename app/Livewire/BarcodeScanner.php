@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Product;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\Attributes\On;
 
@@ -33,10 +34,14 @@ class BarcodeScanner extends Component
             return;
         }
 
+        $inventoryId = AuthHelper::inventory();
         $this->scannedBarcode = $barcode;
 
-        $this->foundProduct = Product::where('barcode', $barcode)
-            ->orWhere('sku', $barcode)
+        $this->foundProduct = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) use ($barcode) {
+                $q->where('barcode', $barcode)
+                  ->orWhere('sku', $barcode);
+            })
             ->first();
 
         if (!$this->foundProduct) {
@@ -64,6 +69,14 @@ class BarcodeScanner extends Component
 
         session()->forget('error');
         session()->forget('success');
+    }
+
+    /**
+     * Clear search state for modal closing
+     */
+    public function clearSearch()
+    {
+        $this->resetScanner();
     }
 
     /**

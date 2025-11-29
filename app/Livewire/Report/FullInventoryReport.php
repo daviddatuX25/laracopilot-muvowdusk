@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,9 @@ class FullInventoryReport extends Component
 
     private function getBaseQuery()
     {
-        $query = Product::with(['category', 'supplier']);
+        $inventoryId = AuthHelper::inventory();
+        $query = Product::with(['category', 'supplier', 'inventory'])
+            ->where('inventory_id', $inventoryId);
 
         $query = $this->applySearchFilter($query, ['name', 'sku', 'barcode']);
         $query = $this->applyCategoryFilter($query);
@@ -78,11 +81,11 @@ class FullInventoryReport extends Component
             'Barcode' => $p->barcode ?? '',
             'Category' => $p->category?->name ?? 'N/A',
             'Supplier' => $p->supplier?->name ?? 'N/A',
-            'Cost Price' => number_format($p->cost_price, 2),
-            'Selling Price' => number_format($p->selling_price, 2),
+            'Cost Price' => '₱' . number_format($p->cost_price, 2),
+            'Selling Price' => '₱' . number_format($p->selling_price, 2),
             'Current Stock' => $p->current_stock,
             'Reorder Level' => $p->reorder_level,
-            'Total Value' => number_format($p->current_stock * $p->cost_price, 2),
+            'Total Value' => '₱' . number_format($p->current_stock * $p->cost_price, 2),
             'Status' => $p->current_stock <= 0 ? 'Out of Stock' : ($p->current_stock <= $p->reorder_level ? 'Low Stock' : 'Normal'),
         ])->toArray();
 
@@ -91,7 +94,8 @@ class FullInventoryReport extends Component
 
     public function showProductModal($productId)
     {
-        $this->modalProduct = Product::with(['category', 'supplier'])->find($productId);
+        $inventoryId = AuthHelper::inventory();
+        $this->modalProduct = Product::where('inventory_id', $inventoryId)->with(['category', 'supplier'])->find($productId);
         $this->modalMovements = \App\Models\StockMovement::where('product_id', $productId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
@@ -108,33 +112,45 @@ class FullInventoryReport extends Component
 
     public function render()
     {
+        $inventoryId = AuthHelper::inventory();
+
         $products = $this->getBaseQuery()->paginate($this->perPage);
         $totalProducts = $this->getBaseQuery()->count();
         $totalStock = $this->getBaseQuery()->sum('current_stock');
         $totalValue = $this->getBaseQuery()->selectRaw('SUM(current_stock * cost_price) as total')->first()->total ?? 0;
 
-        $categoryStats = Category::withCount('products')
+        // Get category stats with proper total value calculation
+        $categoryStats = Category::where('inventory_id', $inventoryId)->withCount('products')
             ->withSum('products', 'current_stock')
-            ->withSum('products as total_cost', DB::raw('current_stock * cost_price'))
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(function($category) {
+                $totalCost = $category->products->sum(fn($p) => $p->current_stock * $p->cost_price);
+                $category->products_sum_total_cost = $totalCost;
+                return $category;
+            })
+            ->sortBy('name');
 
-        $supplierStats = Supplier::withCount('products')
+        // Get supplier stats with proper total value calculation
+        $supplierStats = Supplier::where('inventory_id', $inventoryId)->withCount('products')
             ->withSum('products', 'current_stock')
-            ->withSum('products as total_cost', DB::raw('current_stock * cost_price'))
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(function($supplier) {
+                $totalCost = $supplier->products->sum(fn($p) => $p->current_stock * $p->cost_price);
+                $supplier->products_sum_total_cost = $totalCost;
+                return $supplier;
+            })
+            ->sortBy('name');
 
         $stockStatus = [
-            'normal' => Product::where('current_stock', '>', 0)->whereRaw('current_stock > reorder_level')->count(),
-            'low' => Product::whereRaw('current_stock <= reorder_level AND current_stock > 0')->count(),
-            'out' => Product::where('current_stock', '<=', 0)->count(),
+            'normal' => Product::where('inventory_id', $inventoryId)->where('current_stock', '>', 0)->whereRaw('current_stock > reorder_level')->count(),
+            'low' => Product::where('inventory_id', $inventoryId)->whereRaw('current_stock <= reorder_level AND current_stock > 0')->count(),
+            'out' => Product::where('inventory_id', $inventoryId)->where('current_stock', '<=', 0)->count(),
         ];
 
         return view('livewire.report.full-inventory-report', [
             'products' => $products,
-            'categories' => Category::orderBy('name')->get(),
-            'suppliers' => Supplier::orderBy('name')->get(),
+            'categories' => Category::where('inventory_id', $inventoryId)->orderBy('name')->get(),
+            'suppliers' => Supplier::where('inventory_id', $inventoryId)->orderBy('name')->get(),
             'categoryStats' => $categoryStats,
             'supplierStats' => $supplierStats,
             'stockStatus' => $stockStatus,

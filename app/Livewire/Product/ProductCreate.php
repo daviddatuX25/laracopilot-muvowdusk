@@ -5,6 +5,7 @@ namespace App\Livewire\Product;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
@@ -32,8 +33,8 @@ class ProductCreate extends Component
         'name' => 'required|string|max:255',
         'sku' => 'required|string|max:50|unique:products',
         'barcode' => 'nullable|string|max:50|unique:products',
-        'category_id' => 'required|exists:categories,id',
-        'supplier_id' => 'required|exists:suppliers,id',
+        'category_id' => 'nullable|exists:categories,id',
+        'supplier_id' => 'nullable|exists:suppliers,id',
         'description' => 'nullable|string',
         'cost_price' => 'required|numeric|min:0',
         'selling_price' => 'required|numeric|min:0',
@@ -58,6 +59,9 @@ class ProductCreate extends Component
             $this->barcode = $this->generateBarcode();
         }
 
+        // Get inventory ID from session (stored at login)
+        $inventoryId = AuthHelper::inventory();
+
         DB::beginTransaction();
         try {
             $product = Product::create([
@@ -66,6 +70,7 @@ class ProductCreate extends Component
                 'barcode' => $this->barcode,
                 'category_id' => $this->category_id,
                 'supplier_id' => $this->supplier_id,
+                'inventory_id' => $inventoryId,
                 'description' => $this->description,
                 'cost_price' => $this->cost_price,
                 'selling_price' => $this->selling_price,
@@ -95,8 +100,9 @@ class ProductCreate extends Component
 
     private function generateBarcode()
     {
+        $inventoryId = AuthHelper::inventory();
         $barcode = 'BAR' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
-        while (Product::where('barcode', $barcode)->exists()) {
+        while (Product::where('inventory_id', $inventoryId)->where('barcode', $barcode)->exists()) {
             $barcode = 'BAR' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         }
         return $barcode;
@@ -104,9 +110,11 @@ class ProductCreate extends Component
 
     public function render()
     {
+        $inventoryId = AuthHelper::inventory();
+
         return view('livewire.product.product-create', [
-            'categories' => Category::all(),
-            'suppliers' => Supplier::all(),
+            'categories' => Category::with('inventory')->where('inventory_id', $inventoryId)->get(),
+            'suppliers' => Supplier::with('inventory')->where('inventory_id', $inventoryId)->get(),
         ]);
     }
 }

@@ -16,6 +16,7 @@ class Product extends Model
         'barcode',
         'category_id',
         'supplier_id',
+        'inventory_id',
         'description',
         'cost_price',
         'selling_price',
@@ -32,5 +33,10 @@ class Product extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function inventory(): BelongsTo
+    {
+        return $this->belongsTo(Inventory::class);
     }
 }

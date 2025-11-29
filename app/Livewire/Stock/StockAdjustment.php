@@ -5,6 +5,7 @@ namespace App\Livewire\Stock;
 use App\Models\Alert;
 use App\Models\Product;
 use App\Models\StockMovement;
+use App\Helpers\AuthHelper;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -13,26 +14,27 @@ use Illuminate\Support\Facades\DB;
 #[Layout('layouts.app')]
 class StockAdjustment extends Component
 {
-    public $showManualInput = false; // toggle manual input mode
-    public $barcodeInput = '';        // input field for manual barcode scan
-
     public $search = '';
     public $products = [];
     public $selectedProductId;
     public $selectedProduct;
     public $quantity = '';
-    public $type = 'in'; // 'in', 'out', 'adjustment'
     public $reason;
-    public $useVideoScanner = false; // Camera scanner toggle
     public $presetQuantities = [1, 5, 10];
     public $customQuantity = null;
 
-    protected $rules = [
-        'selectedProductId' => 'required|exists:products,id',
-        'quantity' => 'required|integer|min:1',
-        'type' => 'required|in:in,out,adjustment',
-        'reason' => 'nullable|string|max:255',
-    ];
+    public function mount()
+    {
+        // Check if product_id is passed as query parameter from product lookup
+        $productId = request()->query('product_id');
+        if ($productId) {
+            $inventoryId = AuthHelper::inventory();
+            $product = Product::where('inventory_id', $inventoryId)->find($productId);
+            if ($product) {
+                $this->selectProduct($productId);
+            }
+        }
+    }
 
     public function updatedSearch()
     {
@@ -41,22 +43,61 @@ class StockAdjustment extends Component
             return;
         }
 
-        $this->products = Product::where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('sku', 'like', '%' . $this->search . '%')
-            ->orWhere('barcode', 'like', '%' . $this->search . '%')
+        $inventoryId = AuthHelper::inventory();
+        $this->products = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('sku', 'like', '%' . $this->search . '%')
+                  ->orWhere('barcode', 'like', '%' . $this->search . '%');
+            })
             ->limit(10)
             ->get();
+
+        // Clear selected product if user is searching for a new one
+        if (!empty($this->search) && $this->selectedProduct &&
+            !str_contains(strtolower($this->selectedProduct->name), strtolower($this->search)) &&
+            !str_contains($this->selectedProduct->sku, $this->search) &&
+            !str_contains($this->selectedProduct->barcode, $this->search ?? '')) {
+            $this->selectedProductId = null;
+            $this->selectedProduct = null;
+        }
+
+        // Auto-select on exact match
+        $this->checkForExactMatch();
     }
 
-    public function searchByBarcode()
+    public function checkForExactMatch()
+    {
+        // Only run if there's actual search input and products exist
+        // Skip if search is being cleared (empty)
+        if (empty($this->search) || empty($this->products)) {
+            return;
+        }
+
+        // Check for exact match on barcode or SKU
+        foreach ($this->products as $product) {
+            if (strtolower($product->barcode ?? '') === strtolower($this->search) ||
+                strtolower($product->sku ?? '') === strtolower($this->search)) {
+                // Exact match found, auto-select it (show toast for auto-select)
+                $this->selectProduct($product->id);
+                return;
+            }
+        }
+    }
+
+    public function searchBarcodeInput()
     {
         if (!$this->barcodeInput) {
             $this->dispatch('toast', type: 'error', message: 'Please enter a barcode.');
             return;
         }
 
-        $product = Product::where('barcode', $this->barcodeInput)
-            ->orWhere('sku', $this->barcodeInput)
+        $inventoryId = AuthHelper::inventory();
+        $product = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) {
+                $q->where('barcode', $this->barcodeInput)
+                  ->orWhere('sku', $this->barcodeInput);
+            })
             ->first();
 
         if ($product) {
@@ -70,24 +111,27 @@ class StockAdjustment extends Component
 
     public function selectProduct($productId)
     {
+        $inventoryId = AuthHelper::inventory();
         $this->selectedProductId = $productId;
-        $this->selectedProduct = Product::find($productId);
+        $this->selectedProduct = Product::where('inventory_id', $inventoryId)->find($productId);
         $this->search = $this->selectedProduct->name;
         $this->products = [];
-    }
 
-    public function toggleVideoScanner()
+        // Dispatch success toast
+        $this->dispatch('toast', type: 'success', message: 'Product loaded: ' . $this->selectedProduct->name);
+    }    public function clearProductSelection()
     {
-        $this->useVideoScanner = !$this->useVideoScanner;
-
-        // If disabling, dispatch event to stop scanner
-        if (!$this->useVideoScanner) {
-            $this->dispatch('stopScanner');
-        }
+        $this->selectedProductId = null;
+        $this->selectedProduct = null;
+        $this->search = '';
+        $this->products = [];
+        $this->quantity = '';
+        $this->reason = '';
+        $this->customQuantity = null;
     }
 
     #[On('barcodeDetected')]
-    public function handleBarcodeDetected($barcode)
+    public function searchBarcodeFromScanner($barcode = null)
     {
         // Handle both array and string parameters
         if (is_array($barcode)) {
@@ -99,8 +143,12 @@ class StockAdjustment extends Component
             return;
         }
 
-        $product = Product::where('barcode', $barcode)
-            ->orWhere('sku', $barcode)
+        $inventoryId = AuthHelper::inventory();
+        $product = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) use ($barcode) {
+                $q->where('barcode', $barcode)
+                  ->orWhere('sku', $barcode);
+            })
             ->first();
 
         if ($product) {
@@ -117,48 +165,76 @@ class StockAdjustment extends Component
         $this->customQuantity = null;
     }
 
+    public function addQuantity($amount)
+    {
+        $this->quantity = ($this->quantity ?: 0) + $amount;
+        $this->customQuantity = null;
+    }
+
+    public function subtractQuantity($amount)
+    {
+        $this->quantity = ($this->quantity ?: 0) - $amount;
+        $this->customQuantity = null;
+    }
+
+    public function resetQuantity()
+    {
+        $this->quantity = '';
+        $this->customQuantity = null;
+    }
+
     public function updateCustomQuantity()
     {
-        if ($this->customQuantity && $this->customQuantity > 0) {
-            $this->quantity = $this->customQuantity;
+        if ($this->customQuantity !== null && $this->customQuantity !== '') {
+            $this->quantity = (int) $this->customQuantity;
         }
     }
 
     public function adjustStock()
     {
-        $this->validate();
+        // Validate that we have required data
+        if (!$this->selectedProductId) {
+            session()->flash('error', 'Please select a product');
+            return;
+        }
 
-        $product = Product::find($this->selectedProductId);
+        if ($this->quantity === '' || $this->quantity === null || (int)$this->quantity === 0) {
+            session()->flash('error', 'Please select a quantity (cannot be 0)');
+            return;
+        }
+
+        // Cast quantity to integer
+        $this->quantity = (int) $this->quantity;
+
+        // Verify product exists
+        $inventoryId = AuthHelper::inventory();
+        $product = Product::where('inventory_id', $inventoryId)->find($this->selectedProductId);
+        if (!$product) {
+            session()->flash('error', 'Product not found');
+            return;
+        }
+
         $oldStock = $product->current_stock;
-        $newStock = $oldStock;
+
+        // Auto-detect type: positive = in, negative = out
+        $type = $this->quantity > 0 ? 'in' : 'out';
+        $amount = abs($this->quantity);
+        $newStock = $type === 'in' ? $oldStock + $amount : $oldStock - $amount;
+
+        if ($newStock < 0) {
+            session()->flash('error', 'Cannot set stock to negative. Current stock: ' . $oldStock);
+            return;
+        }
 
         DB::beginTransaction();
         try {
-            if ($this->type === 'in') {
-                $newStock += $this->quantity;
-            } elseif ($this->type === 'out') {
-                $newStock -= $this->quantity;
-            } elseif ($this->type === 'adjustment') {
-                if ($this->reason) {
-                    $newStock = $this->quantity;
-                } else {
-                    $newStock += $this->quantity;
-                }
-            }
-
-            if ($newStock < 0 && !($this->type === 'adjustment' && $this->reason)) {
-                DB::rollBack();
-                $this->dispatch('toast', type: 'error', message: 'Cannot set stock to negative without a specific reason for manual adjustment.');
-                return;
-            }
-
             $product->current_stock = $newStock;
             $product->save();
 
             StockMovement::create([
                 'product_id' => $product->id,
-                'type' => $this->type,
-                'quantity' => $this->quantity,
+                'type' => $type,
+                'quantity' => $amount,
                 'old_stock' => $oldStock,
                 'new_stock' => $newStock,
                 'reason' => $this->reason,
@@ -167,9 +243,11 @@ class StockAdjustment extends Component
             $this->checkAndCreateAlerts($product);
 
             DB::commit();
-            $this->dispatch('toast', type: 'success', message: 'Stock adjusted successfully.');
 
-            $this->reset(['search', 'selectedProductId', 'selectedProduct', 'quantity', 'type', 'reason', 'customQuantity']);
+            $this->reset(['search', 'selectedProductId', 'selectedProduct', 'quantity', 'reason', 'customQuantity']);
+
+            // Dispatch success AFTER reset to avoid validation error showing
+            $this->dispatch('toast', type: 'success', message: 'Stock adjusted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('toast', type: 'error', message: 'Failed to adjust stock: ' . $e->getMessage());

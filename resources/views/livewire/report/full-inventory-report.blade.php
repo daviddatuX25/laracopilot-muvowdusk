@@ -9,8 +9,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Summary Cards -->
-                <div class="p-6 sm:px-20 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                    <div class="flex justify-between items-center mb-4">
+                <div class="p-6 sm:px-20 md:px-10 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                    <div class="flex flex-col justify-between items-center mb-4 lg:flex-row md:items-start gap-4">
                         <h3 class="text-2xl font-bold text-gray-800">Inventory Summary</h3>
                         <div class="flex gap-2 no-print">
                             <button wire:click="exportPdf" class="px-6 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition">
@@ -22,7 +22,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                         <div class="bg-white rounded-lg p-4 shadow">
                             <p class="text-gray-600 text-sm font-semibold">Total Products</p>
                             <p class="text-3xl font-bold text-blue-600">{{ $totalProducts }}</p>
@@ -56,9 +56,9 @@
 
                 <!-- Filters Section -->
                 <div class="p-6 no-print">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
                         <!-- Search -->
-                        <div>
+                        <div class="md:col-span-3 xl:col-span-2">
                             <label class="block text-gray-700 text-sm font-bold mb-2">Search</label>
                             <input type="text"
                                    wire:model.live="search"
@@ -67,7 +67,7 @@
                         </div>
 
                         <!-- Category Filter -->
-                        <div>
+                        <div class="md:col-span-1">
                             <label class="block text-gray-700 text-sm font-bold mb-2">Category</label>
                             <select wire:model.live="filterCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">All Categories</option>
@@ -78,7 +78,7 @@
                         </div>
 
                         <!-- Supplier Filter -->
-                        <div>
+                        <div class="md:col-span-1">
                             <label class="block text-gray-700 text-sm font-bold mb-2">Supplier</label>
                             <select wire:model.live="filterSupplier" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">All Suppliers</option>
@@ -89,7 +89,7 @@
                         </div>
 
                         <!-- Stock Status Filter -->
-                        <div>
+                        <div class="md:col-span-1">
                             <label class="block text-gray-700 text-sm font-bold mb-2">Stock Status</label>
                             <select wire:model.live="filterStockStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">All Items</option>

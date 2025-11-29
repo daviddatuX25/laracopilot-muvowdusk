@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,7 +21,9 @@ class LowStockReport extends Component
 
     public function getLowStockProducts()
     {
-        $query = Product::with(['category', 'supplier'])
+        $inventoryId = AuthHelper::inventory();
+        $query = Product::with(['category', 'supplier', 'inventory'])
+            ->where('inventory_id', $inventoryId)
             ->whereColumn('current_stock', '<=', 'reorder_level')
             ->where('current_stock', '>', 0);
 
@@ -33,7 +36,9 @@ class LowStockReport extends Component
 
     public function exportPdf()
     {
+        $inventoryId = AuthHelper::inventory();
         $products = Product::with(['category', 'supplier'])
+            ->where('inventory_id', $inventoryId)
             ->whereColumn('current_stock', '<=', 'reorder_level')
             ->where('current_stock', '>', 0)
             ->orderBy('current_stock')
@@ -68,10 +73,12 @@ class LowStockReport extends Component
 
     public function render()
     {
+        $inventoryId = AuthHelper::inventory();
+
         return view('livewire.report.low-stock-report', [
             'products' => $this->getLowStockProducts(),
-            'categories' => Category::orderBy('name')->get(),
-            'suppliers' => Supplier::orderBy('name')->get(),
+            'categories' => Category::where('inventory_id', $inventoryId)->orderBy('name')->get(),
+            'suppliers' => Supplier::where('inventory_id', $inventoryId)->orderBy('name')->get(),
         ]);
     }
 }

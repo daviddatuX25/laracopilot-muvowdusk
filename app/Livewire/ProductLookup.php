@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Product;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\Attributes\On;
 
@@ -32,13 +33,17 @@ class ProductLookup extends Component
             return;
         }
 
+        $inventoryId = AuthHelper::inventory();
         $this->searchQuery = $barcode;
         $this->foundProduct = null;
         $this->notFound = false;
 
-        $product = Product::where('barcode', $barcode)
-            ->orWhere('sku', $barcode)
-            ->with('category', 'supplier')
+        $product = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) use ($barcode) {
+                $q->where('barcode', $barcode)
+                  ->orWhere('sku', $barcode);
+            })
+            ->with(['category', 'supplier', 'inventory'])
             ->first();
 
         if (!$product) {
@@ -67,12 +72,16 @@ class ProductLookup extends Component
             return;
         }
 
+        $inventoryId = AuthHelper::inventory();
         $this->foundProduct = null;
         $this->notFound = false;
 
-        $product = Product::where('barcode', 'like', '%' . $this->searchQuery . '%')
-            ->orWhere('sku', 'like', '%' . $this->searchQuery . '%')
-            ->orWhere('name', 'like', '%' . $this->searchQuery . '%')
+        $product = Product::where('inventory_id', $inventoryId)
+            ->where(function ($q) {
+                $q->where('barcode', 'like', '%' . $this->searchQuery . '%')
+                  ->orWhere('sku', 'like', '%' . $this->searchQuery . '%')
+                  ->orWhere('name', 'like', '%' . $this->searchQuery . '%');
+            })
             ->with('category', 'supplier')
             ->first();
 

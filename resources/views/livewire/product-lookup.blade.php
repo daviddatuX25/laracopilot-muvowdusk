@@ -1,9 +1,14 @@
 <div x-data="{
     openModal: false,
-    manualMode: false,
+    useCamera: false,
     init() {
         this.$watch('openModal', (value) => {
-            if (!value) {
+            if (value) {
+                // Focus input after modal opens
+                setTimeout(() => {
+                    document.getElementById('barcode-input')?.focus();
+                }, 100);
+            } else {
                 stopZXingScanner();
             }
         });
@@ -15,8 +20,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
         <div class="text-center">
-            <h3 class="font-bold text-gray-900 text-lg">Barcode Lookup</h3>
-            <p class="text-sm text-gray-600">Scan barcode to find products</p>
+            <h3 class="font-bold text-gray-900 text-lg">Smart Lookup</h3>
+            <p class="text-sm text-gray-600">Scan or enter barcode to find or create new products.</p>
         </div>
     </button>
 
@@ -25,8 +30,8 @@
         <div @click.stop class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             <!-- Modal Header -->
             <div class="bg-blue-500 text-white px-6 py-4 flex justify-between items-center">
-                <h2 class="text-xl font-bold">Barcode Lookup</h2>
-                <button @click="openModal = false; $wire.clearSearch()" class="text-white hover:text-blue-100 transition">
+                <h2 class="text-xl font-bold">Smart Lookup</h2>
+                <button @click="openModal = false; useCamera = false; stopZXingScanner(); $wire.clearSearch()" class="text-white hover:text-blue-100 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -35,27 +40,49 @@
 
             <!-- Modal Content -->
             <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                <!-- Camera Scanner -->
-                @if (!$foundProduct && !$notFound)
-                    <div class="space-y-4">
-                        <!-- Video Element -->
+                <!-- Input Section - Always Visible -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter or Scan Barcode</label>
+                        <div class="flex gap-2">
+                            <div class="flex-1 relative">
+                                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2-5a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <input id="barcode-input"
+                                    type="text"
+                                    wire:model="manualBarcode"
+                                    placeholder="Type or scan barcode..."
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition"
+                                    @keydown.enter="$wire.searchManualBarcode()"
+                                    @input="setTimeout(() => $wire.searchManualBarcode(), 100)">
+                            </div>
+                            <button @click="useCamera = !useCamera; if(useCamera) setTimeout(() => startZXingScanner(), 100); else stopZXingScanner();"
+                                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition font-medium flex items-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.219A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.889H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="hidden sm:inline">Camera</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Camera Toggle Hint -->
+                    <div class="text-xs text-gray-500 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm2 0h2v2h-2V8z" clip-rule="evenodd"/></svg>
+                        <span x-text="useCamera ? 'Camera scanner active' : 'Type barcode or tap Camera to scan'"></span>
+                    </div>
+                </div>
+
+                <!-- Camera Scanner Section -->
+                @if ($foundProduct === null && $notFound === false)
+                    <div x-show="useCamera" class="space-y-3" style="display: none;">
                         <div wire:ignore class="bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-300">
                             <video id="qr-video" width="100%" height="400" class="w-full bg-gray-50"></video>
                         </div>
-
-                        <!-- Scanner Status -->
-                        <div id="scanner-status" class="text-center text-sm text-gray-600 py-2 bg-gray-50 rounded-lg">
-                            Camera scanner ready
-                        </div>
-
-                        <!-- Scanner Controls -->
-                        <div class="flex gap-2">
-                            <button onclick="startZXingScanner()" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold">
-                                ▶️ Start Scanning
-                            </button>
-                            <button onclick="stopZXingScanner()" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-semibold">
-                                ⏹️ Stop
-                            </button>
+                        <div id="scanner-status" class="text-center text-sm text-gray-600 py-2 bg-blue-50 rounded-lg">
+                            📷 Position barcode in the frame to scan...
                         </div>
                     </div>
                 @endif
@@ -140,6 +167,12 @@
                 </button>
 
                 @if ($foundProduct)
+                    <a href="{{ route('stock-movements.adjust') }}?product_id={{ $foundProduct->id }}" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Adjust Stock
+                    </a>
                     <a href="{{ route('products.edit', $foundProduct->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -163,103 +196,90 @@
 @push('scripts')
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-let zxingReader = null;
-let activeCameraId = null;
-let isScanning = false;
+// Wait for global scanner to be ready - only setup once
+if (!window._productLookupScannerSetup) {
+    window._productLookupScannerSetup = true;
 
-async function startZXingScanner() {
-    if (isScanning) return;
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.BarcodeScanner) return;
 
-    isScanning = true;
-    const status = document.getElementById('scanner-status');
-    status.innerText = "🔄 Initializing camera…";
+        // Override for this component - dispatch custom event
+        window.BarcodeScanner.start = async function() {
+            if (this.isScanning) return;
 
-    try {
-        // Check if mediaDevices is available
-        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-            status.innerText = "❌ Camera access not available on this device/connection.";
-            console.error("mediaDevices not supported");
-            isScanning = false;
-            return;
-        }
+            this.isScanning = true;
+            const status = document.getElementById('scanner-status');
+            if (status) status.innerText = "🔄 Initializing camera…";
 
-        if (!zxingReader) {
-            zxingReader = new ZXing.BrowserMultiFormatReader();
-            console.log("ZXing reader initialized");
-        }
-
-        // Get cameras
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const cameras = devices.filter(d => d.kind === "videoinput");
-
-        if (!cameras.length) {
-            status.innerText = "❌ No camera detected.";
-            isScanning = false;
-            return;
-        }
-
-        // Prefer back camera on mobile
-        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId
-                         || cameras[0].deviceId;
-
-        status.innerText = "📷 Camera active. Point at barcode...";
-
-        // Start scanning
-        zxingReader.decodeFromVideoDevice(
-            activeCameraId,
-            'qr-video',
-            async (result, error) => {
-                if (result) {
-                    console.log("✓ Barcode detected:", result.text);
-                    document.getElementById('scanner-status').innerText = "✓ Found: " + result.text;
-
-                    // Dispatch to Livewire component
-                    console.log("Dispatching event with barcode:", result.text);
-                    Livewire.dispatch('searchProductByBarcode', { barcode: result.text });
-                    console.log("Event dispatched!");
-
-                    // Stop scanner after successful scan
-                    stopZXingScanner();
-                }                if (error && error.name !== 'NotFoundException') {
-                    console.warn("Decode error:", error.name);
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                    if (status) status.innerText = "❌ Camera access not available on this device/connection.";
+                    this.isScanning = false;
+                    return;
                 }
+
+                if (!this.zxingReader) {
+                    this.zxingReader = new ZXing.BrowserMultiFormatReader();
+                }
+
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === "videoinput");
+
+                if (!cameras.length) {
+                    if (status) status.innerText = "❌ No camera detected.";
+                    this.isScanning = false;
+                    return;
+                }
+
+                this.activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId || cameras[0].deviceId;
+                if (status) status.innerText = "📷 Camera active. Point at barcode...";
+
+                // Start timeout - use direct setTimeout
+                if (this.scanTimeout) clearTimeout(this.scanTimeout);
+                this.scanTimeout = setTimeout(() => {
+                    if (this.isScanning) {
+                        const statusEl = document.getElementById('scanner-status');
+                        if (statusEl) statusEl.innerText = "⏱️ Timeout: No barcode detected. Stopping scanner...";
+                        this.stop();
+                    }
+                }, this.timeoutDuration || 60000);
+
+                this.zxingReader.decodeFromVideoDevice(
+                    this.activeCameraId,
+                    'qr-video',
+                    async (result, error) => {
+                        if (result) {
+                            const statusEl = document.getElementById('scanner-status');
+                            if (statusEl) statusEl.innerText = "✓ Found: " + result.text;
+
+                            // Clear timeout on success
+                            if (this.scanTimeout) clearTimeout(this.scanTimeout);
+
+                            // Dispatch custom event for this component
+                            Livewire.dispatch('searchProductByBarcode', { barcode: result.text });
+                            this.stop();
+                        }
+                        if (error && error.name !== 'NotFoundException') {
+                            console.warn("Decode error:", error.name);
+                        }
+                    }
+                );
+            } catch (error) {
+                const statusEl = document.getElementById('scanner-status');
+                if (statusEl) {
+                    if (error.message.includes('Permission denied')) {
+                        statusEl.innerText = "❌ Camera permission denied.";
+                    } else if (error.message.includes('enumerateDevices')) {
+                        statusEl.innerText = "❌ Camera access not available. Use HTTPS.";
+                    } else {
+                        statusEl.innerText = "❌ Error: " + error.message;
+                    }
+                }
+                this.isScanning = false;
+                if (this.scanTimeout) clearTimeout(this.scanTimeout);
             }
-        );
-
-    } catch (error) {
-        console.error("Scanner error:", error);
-        const status = document.getElementById('scanner-status');
-        if (error.message.includes('Permission denied')) {
-            status.innerText = "❌ Camera permission denied. Please enable camera access in settings.";
-        } else if (error.message.includes('enumerateDevices')) {
-            status.innerText = "❌ Camera access not available. Ensure you're on HTTPS.";
-        } else {
-            status.innerText = "❌ Error: " + error.message;
-        }
-        isScanning = false;
-    }
+        };
+    });
 }
-
-async function stopZXingScanner() {
-    if (!isScanning) return;
-
-    isScanning = false;
-    const status = document.getElementById('scanner-status');
-
-    try {
-        if (zxingReader) {
-            await zxingReader.reset();
-            console.log("Scanner stopped");
-        }
-    } catch (error) {
-        console.error("Error stopping scanner:", error);
-    }
-
-    status.innerText = "⏸️ Scanner stopped.";
-}
-
-// Auto-stop on Livewire navigation or page unload
-document.addEventListener('livewire:navigated', stopZXingScanner);
-window.addEventListener('beforeunload', stopZXingScanner);
 </script>
 @endpush

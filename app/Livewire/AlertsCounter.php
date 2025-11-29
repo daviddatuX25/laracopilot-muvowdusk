@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Alert;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\Attributes\On;
 
@@ -19,7 +20,11 @@ class AlertsCounter extends Component
     #[On('alert-resolved')]
     public function updateCount()
     {
-        $this->pendingCount = Alert::where('status', 'pending')->count();
+        $inventoryId = AuthHelper::inventory();
+        $this->pendingCount = Alert::where('status', 'pending')
+            ->whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            })->count();
     }
 
     public function render()

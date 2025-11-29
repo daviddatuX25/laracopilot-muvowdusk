@@ -5,6 +5,7 @@ namespace App\Livewire\Product;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -48,8 +49,8 @@ class ProductEdit extends Component
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:50',
             'barcode' => 'nullable|string|max:50',
-            'category_id' => 'required|exists:categories,id',
-            'supplier_id' => 'required|exists:suppliers,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
             'description' => 'nullable|string',
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
@@ -94,10 +95,12 @@ class ProductEdit extends Component
     private function callUpdateEndpoint($data)
     {
         // For now, handle the update locally with proper validation
-        $product = Product::findOrFail($this->productId);
+        $inventoryId = AuthHelper::inventory();
+        $product = Product::where('inventory_id', $inventoryId)->findOrFail($this->productId);
 
         // Validate unique constraints at the database level
-        $sku_exists = Product::where('sku', $this->sku)
+        $sku_exists = Product::where('inventory_id', $inventoryId)
+            ->where('sku', $this->sku)
             ->where('id', '!=', $this->productId)
             ->exists();
 
@@ -105,7 +108,8 @@ class ProductEdit extends Component
             return ['success' => false, 'message' => 'SKU already exists'];
         }
 
-        $barcode_exists = Product::where('barcode', $this->barcode)
+        $barcode_exists = Product::where('inventory_id', $inventoryId)
+            ->where('barcode', $this->barcode)
             ->where('id', '!=', $this->productId)
             ->where('barcode', '!=', null)
             ->exists();
@@ -137,9 +141,11 @@ class ProductEdit extends Component
 
     public function render()
     {
+        $inventoryId = AuthHelper::inventory();
+
         return view('livewire.product.product-edit', [
-            'categories' => Category::all(),
-            'suppliers' => Supplier::all(),
+            'categories' => Category::with('inventory')->where('inventory_id', $inventoryId)->get(),
+            'suppliers' => Supplier::with('inventory')->where('inventory_id', $inventoryId)->get(),
         ]);
     }
 }

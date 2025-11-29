@@ -29,7 +29,7 @@
                             </div>
                             <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
                                 <h3 class="text-sm font-medium text-indigo-900">Total Stock Value</h3>
-                                <p class="text-3xl font-extrabold text-indigo-600 mt-2">${{ number_format($totalStockValue, 2) }}</p>
+                                <p class="text-3xl font-extrabold text-indigo-600 mt-2">₱{{ number_format($totalStockValue, 2) }}</p>
                             </div>
                             <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                                 <h3 class="text-sm font-medium text-yellow-900">Total Stock Units</h3>

@@ -48,106 +48,101 @@
 @push('scripts')
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-let zxingReader = null;
-let activeCameraId = null;
-let isScanning = false;
+// Use global BarcodeScanner module with component-specific override - only setup once
+if (!window._barcodeScannerSetup) {
+    window._barcodeScannerSetup = true;
 
-async function startZXingScanner() {
-    if (isScanning) return;
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.BarcodeScanner) return;
 
-    isScanning = true;
-    const status = document.getElementById('scanner-status');
-    status.innerText = "Initializing camera…";
+        window.BarcodeScanner.start = async function() {
+            if (this.isScanning) return;
+            this.isScanning = true;
+            const status = document.getElementById('scanner-status');
+            if (status) status.innerText = "Initializing camera…";
 
-    try {
-        if (!zxingReader) {
-            zxingReader = new ZXing.BrowserMultiFormatReader();
-            console.log("ZXing reader initialized");
-        }
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                    if (status) status.innerText = "❌ Camera access not available on this device/connection.";
+                    this.isScanning = false;
+                    return;
+                }
 
-        // Get cameras
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const cameras = devices.filter(d => d.kind === "videoinput");
+                if (!this.zxingReader) {
+                    this.zxingReader = new ZXing.BrowserMultiFormatReader();
+                }
 
-        if (!cameras.length) {
-            status.innerText = "❌ No camera detected.";
-            isScanning = false;
-            return;
-        }
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === "videoinput");
 
-        // Prefer back camera on mobile
-        activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId
-                         || cameras[0].deviceId;
+                if (!cameras.length) {
+                    if (status) status.innerText = "❌ No camera detected.";
+                    this.isScanning = false;
+                    return;
+                }
 
-        status.innerText = "📷 Camera active. Point at barcode...";
+                this.activeCameraId = cameras.find(c => c.label.toLowerCase().includes("back"))?.deviceId || cameras[0].deviceId;
+                if (status) status.innerText = "📷 Camera active. Point at barcode...";
 
-        // Start scanning with higher resolution
-        zxingReader.decodeFromVideoDevice(
-            activeCameraId,
-            'qr-video',
-            async (result, error) => {
-                if (result) {
-                    console.log("✓ Barcode detected:", result.text);
-                    document.getElementById('scanner-status').innerText = "✓ Barcode: " + result.text;
-
-                    // Fetch product data from API
-                    try {
-                        const response = await fetch(`/api/products/search?q=${encodeURIComponent(result.text)}`);
-                        const data = await response.json();
-
-                        console.log("API Response:", data);
-
-                        if (data.product) {
-                            console.log("Product found, dispatching event...");
-                            // Dispatch to Livewire component with the barcode
-                            Livewire.dispatch('searchProductByBarcode', { barcode: result.text });
-                            console.log("Event dispatched!");
-                        } else {
-                            console.warn('Product not found for barcode:', result.text);
-                            alert('Product not found: ' + result.text);
-                        }
-                    } catch (err) {
-                        console.error('Error fetching product:', err);
-                        alert('Error searching product');
+                // Start timeout timer
+                if (this.scanTimeout) clearTimeout(this.scanTimeout);
+                this.scanTimeout = setTimeout(() => {
+                    if (this.isScanning) {
+                        const statusEl = document.getElementById('scanner-status');
+                        if (statusEl) statusEl.innerText = "⏱️ Timeout: No barcode detected. Stopping scanner...";
+                        this.stop();
                     }
+                }, this.timeoutDuration || 60000);
 
-                    stopZXingScanner();
-                }
+                this.zxingReader.decodeFromVideoDevice(
+                    this.activeCameraId,
+                    'qr-video',
+                    async (result, error) => {
+                        if (result) {
+                            const statusEl = document.getElementById('scanner-status');
+                            if (statusEl) statusEl.innerText = "✓ Barcode: " + result.text;
 
-                if (error && error.name !== 'NotFoundException') {
-                    console.warn("Decode error:", error.name, error.message);
+                            // Clear timeout on successful scan
+                            if (this.scanTimeout) clearTimeout(this.scanTimeout);
+
+                            try {
+                                const response = await fetch(`/api/products/search?q=${encodeURIComponent(result.text)}`);
+                                const data = await response.json();
+
+                                if (data.product) {
+                                    Livewire.dispatch('searchProductByBarcode', { barcode: result.text });
+                                } else {
+                                    alert('Product not found: ' + result.text);
+                                }
+                            } catch (err) {
+                                console.error('Error fetching product:', err);
+                                alert('Error searching product');
+                            }
+
+                            this.stop();
+                        }
+
+                        if (error && error.name !== 'NotFoundException') {
+                            console.warn("Decode error:", error.name);
+                        }
+                    }
+                );
+            } catch (error) {
+                const statusEl = document.getElementById('scanner-status');
+                if (statusEl) {
+                    if (error.message.includes('Permission denied')) {
+                        statusEl.innerText = "❌ Camera permission denied.";
+                    } else if (error.message.includes('enumerateDevices')) {
+                        statusEl.innerText = "❌ Camera access not available. Use HTTPS.";
+                    } else {
+                        statusEl.innerText = "❌ Error: " + error.message;
+                    }
                 }
+                this.isScanning = false;
+                if (this.scanTimeout) clearTimeout(this.scanTimeout);
             }
-        );
-
-
-    } catch (error) {
-        console.error("Scanner error:", error);
-        status.innerText = "❌ Error: " + error.message;
-        isScanning = false;
-    }
+        };
+    });
 }
-
-async function stopZXingScanner() {
-    if (!isScanning) return;
-
-    isScanning = false;
-    const status = document.getElementById('scanner-status');
-
-    try {
-        if (zxingReader) {
-            await zxingReader.reset();
-            console.log("Scanner stopped");
-        }
-    } catch (error) {
-        console.error("Error stopping scanner:", error);
-    }
-
-    status.innerText = "Scanner stopped.";
-}
-
-// Auto-stop on Livewire navigation or page unload
-document.addEventListener('livewire:navigated', stopZXingScanner);
-window.addEventListener('beforeunload', stopZXingScanner);
 </script>
 @endpush

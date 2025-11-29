@@ -3,6 +3,7 @@
 namespace App\Livewire\Report;
 
 use App\Models\StockMovement;
+use App\Helpers\AuthHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -24,7 +25,11 @@ class MovementHistoryReport extends Component
 
     private function getBaseQuery()
     {
-        $query = StockMovement::with('product');
+        $inventoryId = AuthHelper::inventory();
+        $query = StockMovement::with('product')
+            ->whereHas('product', function ($q) use ($inventoryId) {
+                $q->where('inventory_id', $inventoryId);
+            });
 
         if (!empty($this->search)) {
             $query->whereHas('product', function ($q) {
