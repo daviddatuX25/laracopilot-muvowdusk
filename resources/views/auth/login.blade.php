@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Inventory System</title>
+    <script>
+        // Initialize theme from localStorage or system preference
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light') {
+            document.documentElement.classList.add('light');
+        } else if (theme === 'dark') {
+            document.documentElement.classList.remove('light');
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.classList.add('light');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Exo:100,400,700" rel="stylesheet">
     <style>
@@ -34,6 +50,13 @@
             background-position: 0 0;
             animation: bg-scrolling-reverse 0.92s infinite linear;
             background-color: #0a0a0a;
+        }
+
+        /* Light mode background */
+        html.light body {
+            background-image: none;
+            background-color: #f8f9fa;
+            animation: none;
         }
 
         /* Primary gradient for hero sections */
@@ -137,7 +160,7 @@
         }
     </style>
 </head>
-<body class="bg-black text-white overflow-x-hidden"
+<body class="bg-white dark:bg-black text-gray-900 dark:text-white overflow-x-hidden"
     x-data="{
         showRequestForm: false,
         requestType: '',
@@ -219,48 +242,52 @@
         }
     }">
     <!-- Features Marquee Header -->
-    <div class="fixed top-0 left-0 right-0 z-40 glass border-b border-purple-500/30 py-7">
-        <div class="marquee-container">
-            <div class="animate-scroll flex gap-12 px-4 whitespace-nowrap">
-                <span class="text-white font-semibold flex items-center gap-2">
+    <div class="fixed top-0 left-0 right-0 z-40 glass border-b border-purple-500/30 py-7 flex items-center justify-between px-4">
+        <div class="flex-1 marquee-container">
+            <div class="animate-scroll flex gap-12 whitespace-nowrap">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">📦</span> Product Management
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">✓</span> Real-time Stock Tracking
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">⚡</span> Barcode Scanning
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">🤝</span> Supplier Management
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">🔔</span> Smart Alerts
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">📊</span> Detailed Reports
                 </span>
                 <!-- Duplicate for seamless loop -->
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">📦</span> Product Management
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">✓</span> Real-time Stock Tracking
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">⚡</span> Barcode Scanning
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">🤝</span> Supplier Management
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">🔔</span> Smart Alerts
                 </span>
-                <span class="text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                     <span class="text-2xl">📊</span> Detailed Reports
                 </span>
             </div>
         </div>
+        <!-- Theme Toggle Button -->
+        <button onclick="toggleTheme()" class="ml-4 px-3 py-2 rounded-lg bg-purple-600/50 hover:bg-purple-600 text-white transition flex items-center gap-2 whitespace-nowrap text-sm font-medium" title="Toggle light/dark mode (Press 'T')">
+            <span id="themeIcon">⏸️</span>
+        </button>
     </div>
 
     <!-- Main Content -->
@@ -329,8 +356,8 @@
                         <div class="hero-no-bg rounded-xl p-12 h-full flex flex-col justify-center">
                             <div class="text-center">
                                 <div class="text-6xl mb-6">📦</div>
-                                <h1 class="text-5xl font-bold text-white mb-4 text-shadow" style="font-family: 'Exo', sans-serif; letter-spacing: -1px;">Manage Your Inventory Now!</h1>
-                                <p class="text-2xl text-gray-200 mb-8">Professional, Real-time Stock Management Solution</p>
+                                <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-4 text-shadow" style="font-family: 'Exo', sans-serif; letter-spacing: -1px;">Manage Your Inventory Now!</h1>
+                                <p class="text-2xl text-gray-600 dark:text-gray-200 mb-8">Professional, Real-time Stock Management Solution</p>
                                 <button
                                     @click="openRequestForm()"
                                     class="bg-purple-600 hover:bg-purple-700 text-white px-10 py-5 rounded-lg font-bold text-xl transition transform hover:scale-110 shadow-lg inline-block"
@@ -358,7 +385,7 @@
                             </div>
 
                             <div class="shrink-0 mb-6 flex items-center justify-between">
-                                <h2 class="text-3xl font-bold text-white accent-violet">Request Account Access</h2>
+                                <h2 class="text-3xl font-bold text-white dark:text-white accent-violet">Request Account Access</h2>
                                 <button
                                     @click="backToHero()"
                                     class="text-gray-300 hover:text-white transition text-2xl"
@@ -452,6 +479,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+
+            if (html.classList.contains('light')) {
+                // Switch to dark mode
+                html.classList.remove('light');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.textContent = '⏸️';
+            } else {
+                // Switch to light mode
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                themeIcon.textContent = '▶️';
+            }
+        }
+
+        // Update theme button on page load
+        function updateThemeButton() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+
+            if (html.classList.contains('light')) {
+                themeIcon.textContent = '▶️';
+            } else {
+                themeIcon.textContent = '⏸️';
+            }
+        }        // Initialize theme button on page load
+        document.addEventListener('DOMContentLoaded', updateThemeButton);
+
+        // Keyboard shortcut: Press 'T' to toggle theme
+        document.addEventListener('keydown', function(e) {
+            if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey) {
+                // Only toggle if not typing in an input field
+                if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                    toggleTheme();
+                }
+            }
+        });
+    </script>
 
     <!-- Footer -->
     <footer class="mt-20 py-6 border-t border-purple-500/20">

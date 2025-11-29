@@ -11,7 +11,7 @@ use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class AdminUserSeeder extends Seeder
+class DemoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
