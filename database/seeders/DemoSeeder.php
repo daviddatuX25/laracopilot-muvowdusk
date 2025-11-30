@@ -24,19 +24,19 @@ class DemoSeeder extends Seeder
 
         // Instructor Zeus - Admin
         $zeus = User::create([
-            'userid' => 'zues',
+            'userid' => 'zeus',
             'name' => 'Zeus Instructor',
             'email' => 'zeus@inventory.local',
-            'password' => Hash::make('zues123'),
+            'password' => Hash::make('zeus123'),
             'is_admin' => false,
         ]);
 
         // Instructor Zeus - Admin Account
         $zeusAdmin = User::create([
-            'userid' => 'zuesadmin',
+            'userid' => 'zeusadmin',
             'name' => 'Zeus Admin',
-            'email' => 'zuesadmin@inventory.local',
-            'password' => Hash::make('zuesadmin123'),
+            'email' => 'zeusadmin@inventory.local',
+            'password' => Hash::make('zeusadmin123'),
             'is_admin' => true,
         ]);
 

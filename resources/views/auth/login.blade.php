@@ -29,7 +29,8 @@
             100% { transform: translateX(-50%); }
         }
         .animate-scroll {
-            animation: scroll 30s linear infinite;
+            animation: scroll 25s linear infinite;
+
         }
         .marquee-container {
             overflow: hidden;
@@ -295,10 +296,10 @@
         <div class="max-w-7xl mx-auto w-full">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <!-- Left: Login Section (40%) - Bigger -->
-                <div class="lg:col-span-5">
+                <div class="lg:col-span-5 row-span-1 row-start-2 lg:row-span-1 lg:row-start-1 ">
                     <!-- Existing Customers -->
-                    <div class="glass rounded-xl shadow-2xl p-8 sticky top-12 border border-purple-500/30">
-                        <h2 class="text-2xl font-bold text-white mb-6 text-center accent-violet">Existing Customers</h2>
+                    <div class="glass rounded-xl shadow-2xl p-8 sticky top-12 border border-purple-500/30 mt-5 lg:mt-0">
+                        <h2 class="text-2xl font-bold dark:text-white text-black-900 mb-6 text-center text-shadow">Existing Customers</h2>
                         <form class="space-y-6" action="{{ route('auth.login') }}" method="POST">
                             @csrf
 
@@ -312,25 +313,25 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label for="userid" class="block text-sm font-medium text-gray-300 mb-2">User ID</label>
+                                    <label for="userid" class="block text-sm font-medium text-purple-800 dark:text-gray-300 mb-2">User ID</label>
                                     <input
                                         id="userid"
                                         name="userid"
                                         type="text"
                                         required
-                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
+                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-purple-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
                                         placeholder="Enter your user ID"
                                         value="{{ old('userid') }}"
                                     >
                                 </div>
                                 <div>
-                                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                                    <label for="password" class="block text-sm font-medium text-purple-800 dark:text-gray mb-2">Password</label>
                                     <input
                                         id="password"
                                         name="password"
                                         type="password"
                                         required
-                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
+                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-purple-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
                                         placeholder="Enter your password"
                                     >
                                 </div>
@@ -347,7 +348,7 @@
                 </div>
 
                 <!-- Right: Hero & Form Section (60%) -->
-                <div class="lg:col-span-7 relative min-h-[700px]">
+                <div class="lg:col-span-7 row-span-1 row-start-1 lg:row-span-1 lg:row-start-1  relative min-h-[700px]">
                     <!-- Hero Section Container -->
                     <div
                         :class="showRequestForm ? 'opacity-out' : 'opacity-in'"
