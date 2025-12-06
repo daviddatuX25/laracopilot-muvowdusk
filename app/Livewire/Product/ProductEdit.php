@@ -62,6 +62,20 @@ class ProductEdit extends Component
 
     public function update()
     {
+        // Convert empty strings to null before validation
+        if ($this->category_id === '') {
+            $this->category_id = null;
+        }
+        if ($this->supplier_id === '') {
+            $this->supplier_id = null;
+        }
+        if ($this->barcode === '') {
+            $this->barcode = null;
+        }
+        if ($this->description === '') {
+            $this->description = null;
+        }
+
         $this->validate();
 
         try {
