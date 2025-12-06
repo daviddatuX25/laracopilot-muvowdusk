@@ -12,6 +12,7 @@ class CategoryList extends Component
 {
     use WithPagination;
 
+    public $search = '';
     public $viewMode = 'table'; // 'table', 'card'
 
     #[On('category-updated', 'category-created')]
@@ -20,8 +21,16 @@ class CategoryList extends Component
         // Get inventory ID from session (stored at login)
         $inventoryId = AuthHelper::inventory();
 
+        $categories = Category::with(['inventory', 'products'])
+            ->where('inventory_id', $inventoryId)
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
+            })
+            ->paginate(10);
+
         return view('livewire.category.category-list', [
-            'categories' => Category::with(['inventory', 'products'])->where('inventory_id', $inventoryId)->paginate(10),
+            'categories' => $categories,
         ]);
     }
 

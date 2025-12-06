@@ -1,0 +1,28 @@
+@props([
+    'label' => '',
+    'type' => 'text',
+    'placeholder' => '',
+    'error' => '',
+    'disabled' => false,
+    'wire' => '',
+])
+
+<div>
+    @if ($label)
+        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            {{ $label }}
+        </label>
+    @endif
+    <input
+        {{ $attributes->merge([
+            'type' => $type,
+            'placeholder' => $placeholder,
+            'class' => 'w-full px-4 py-2 border border-border rounded-lg bg-input-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent ' . ($error ? 'border-red-500' : ''),
+        ]) }}
+        @if ($wire) wire:model="{{ $wire }}" @endif
+        @if ($disabled) disabled @endif
+    >
+    @if ($error)
+        <span class="text-sm text-danger">{{ $error }}</span>
+    @endif
+</div>

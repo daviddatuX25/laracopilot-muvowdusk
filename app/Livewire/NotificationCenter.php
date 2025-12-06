@@ -25,7 +25,7 @@ class NotificationCenter extends Component
     {
         $inventoryId = AuthHelper::inventory();
 
-        $this->notifications = Alert::where('status', 'pending')
+        $alerts = Alert::where('status', 'pending')
             ->with('product')
             ->whereHas('product', function ($q) use ($inventoryId) {
                 $q->where('inventory_id', $inventoryId);
@@ -33,6 +33,22 @@ class NotificationCenter extends Component
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
+
+        // Convert models to arrays for serialization
+        $this->notifications = $alerts->map(function ($alert) {
+            return [
+                'id' => $alert->id,
+                'product_id' => $alert->product_id,
+                'product_name' => $alert->product->name ?? 'N/A',
+                'type' => $alert->type,
+                'message' => $alert->message,
+                'status' => $alert->status,
+                'seen_at' => $alert->seen_at,
+                'created_at' => $alert->created_at,
+                'is_seen' => !is_null($alert->seen_at),
+                'formatted_age' => $alert->created_at->diffForHumans(),
+            ];
+        })->toArray();
 
         $this->totalCount = Alert::where('status', 'pending')
             ->whereHas('product', function ($q) use ($inventoryId) {

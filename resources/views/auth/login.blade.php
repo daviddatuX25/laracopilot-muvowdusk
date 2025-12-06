@@ -53,16 +53,19 @@
             background-color: #0a0a0a;
         }
 
-        /* Light mode background */
-        html.light body {
-            background-image: none;
-            background-color: #f8f9fa;
-            animation: none;
-        }
-
-        /* Primary gradient for hero sections */
+        <!-- Primary gradient for hero sections -->
         .gradient-violet {
             background: linear-gradient(135deg, rgba(20, 10, 40, 0.9) 0%, rgba(30, 15, 50, 0.95) 100%);
+        }
+
+        /* Dark mode gradient for form section */
+        html:not(.light) .gradient-violet {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 1) 100%);
+        }
+
+        /* Light mode gradient for form section */
+        html.light .gradient-violet {
+            background: linear-gradient(135deg, rgba(243, 244, 246, 0.95) 0%, rgba(229, 231, 235, 1) 100%);
         }
 
         /* Accent color utilities */
@@ -161,7 +164,7 @@
         }
     </style>
 </head>
-<body class="bg-white dark:bg-black text-gray-900 dark:text-white overflow-x-hidden"
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white overflow-x-hidden"
     x-data="{
         showRequestForm: false,
         requestType: '',
@@ -243,52 +246,48 @@
         }
     }">
     <!-- Features Marquee Header -->
-    <div class="fixed top-0 left-0 right-0 z-40 glass border-b border-purple-500/30 py-7 flex items-center justify-between px-4">
+    <div class="fixed top-0 left-0 right-0 z-40 glass border-b border-purple-500/30 py-7 flex items-center px-4">
         <div class="flex-1 marquee-container">
             <div class="animate-scroll flex gap-12 whitespace-nowrap">
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">📦</span> Product Management
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">✓</span> Real-time Stock Tracking
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">⚡</span> Barcode Scanning
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">🤝</span> Supplier Management
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">🔔</span> Smart Alerts
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">📊</span> Detailed Reports
                 </span>
                 <!-- Duplicate for seamless loop -->
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">📦</span> Product Management
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">✓</span> Real-time Stock Tracking
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">⚡</span> Barcode Scanning
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">🤝</span> Supplier Management
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">🔔</span> Smart Alerts
                 </span>
-                <span class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                <span class="text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-2">
                     <span class="text-2xl">📊</span> Detailed Reports
                 </span>
             </div>
         </div>
-        <!-- Theme Toggle Button -->
-        <button onclick="toggleTheme()" class="ml-4 px-3 py-2 rounded-lg bg-purple-600/50 hover:bg-purple-600 text-white transition flex items-center gap-2 whitespace-nowrap text-sm font-medium" title="Toggle light/dark mode (Press 'T')">
-            <span id="themeIcon">⏸️</span>
-        </button>
     </div>
 
     <!-- Main Content -->
@@ -298,14 +297,14 @@
                 <!-- Left: Login Section (40%) - Bigger -->
                 <div class="lg:col-span-5 row-span-1 row-start-2 lg:row-span-1 lg:row-start-1 ">
                     <!-- Existing Customers -->
-                    <div class="glass rounded-xl shadow-2xl p-8 sticky top-12 border border-purple-500/30 mt-5 lg:mt-0">
-                        <h2 class="text-2xl font-bold dark:text-white text-black-900 mb-6 text-center text-shadow">Existing Customers</h2>
+                    <div class="glass rounded-xl shadow-2xl p-8 sticky top-12 border border-purple-500/30 mt-5 lg:mt-0 bg-white dark:bg-gray-800">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center text-shadow">Existing Customers</h2>
                         <form class="space-y-6" action="{{ route('auth.login') }}" method="POST">
                             @csrf
 
                             @if ($errors->has('auth'))
-                                <div class="rounded-md bg-red-900/20 border border-red-500 p-4">
-                                    <p class="text-sm font-medium text-red-400">
+                                <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500 p-4">
+                                    <p class="text-sm font-medium text-red-700 dark:text-red-400">
                                         {{ $errors->first('auth') }}
                                     </p>
                                 </div>
@@ -313,25 +312,25 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label for="userid" class="block text-sm font-medium text-purple-800 dark:text-gray-300 mb-2">User ID</label>
+                                    <label for="userid" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">User ID</label>
                                     <input
                                         id="userid"
                                         name="userid"
                                         type="text"
                                         required
-                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-purple-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500"
                                         placeholder="Enter your user ID"
                                         value="{{ old('userid') }}"
                                     >
                                 </div>
                                 <div>
-                                    <label for="password" class="block text-sm font-medium text-purple-800 dark:text-gray mb-2">Password</label>
+                                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
                                     <input
                                         id="password"
                                         name="password"
                                         type="password"
                                         required
-                                        class="w-full px-4 py-2 border border-purple-500/30 bg-white/5 text-purple-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder-gray-500"
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500"
                                         placeholder="Enter your password"
                                     >
                                 </div>
@@ -380,16 +379,16 @@
                         <div class="gradient-violet border border-purple-500/50 rounded-xl p-12 h-full flex flex-col relative">
                             <!-- Scroll Indicator Arrow - Bottom Right -->
                             <div x-show="scrollState === 'top'" class="absolute bottom-6 right-6 z-30 pointer-events-none">
-                                <svg class="w-6 h-6 text-purple-400 animate-bounce-down" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-purple-500 dark:text-purple-400 animate-bounce-down" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
                                 </svg>
                             </div>
 
                             <div class="shrink-0 mb-6 flex items-center justify-between">
-                                <h2 class="text-3xl font-bold text-white dark:text-white accent-violet">Request Account Access</h2>
+                                <h2 class="text-3xl font-bold text-gray-900 dark:text-white accent-violet">Request Account Access</h2>
                                 <button
                                     @click="backToHero()"
-                                    class="text-gray-300 hover:text-white transition text-2xl"
+                                    class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition text-2xl"
                                     title="Back to Home"
                                 >
                                     ← Back
@@ -401,33 +400,33 @@
                                 <form class="space-y-4" @submit.prevent="sendRequest()">
                             <!-- Full Name -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
-                                <input type="text" x-model="fullName" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" placeholder="Your full name" required>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
+                                <input type="text" x-model="fullName" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Your full name" required>
                             </div>
 
                             <!-- Contact Number -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Contact Number *</label>
-                                <input type="tel" x-model="contactNumber" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" placeholder="09XX XXX XXXX" required>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contact Number *</label>
+                                <input type="tel" x-model="contactNumber" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500" placeholder="09XX XXX XXXX" required>
                             </div>
 
                             <!-- Email -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
-                                <input type="email" x-model="userEmail" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" placeholder="Your email address" required>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
+                                <input type="email" x-model="userEmail" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Your email address" required>
                             </div>
 
                             <!-- Messenger ID -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Messenger ID / Username</label>
-                                <input type="text" x-model="messengerId" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" placeholder="Your Facebook Messenger username or ID">
-                                <p class="text-xs text-gray-400 mt-1">Leave blank to contact via email or phone</p>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Messenger ID / Username</label>
+                                <input type="text" x-model="messengerId" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Your Facebook Messenger username or ID">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave blank to contact via email or phone</p>
                             </div>
 
                             <!-- Business Type -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Business Type / Field of Use *</label>
-                                <select x-model="fieldOfUse" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" required>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Business Type / Field of Use *</label>
+                                <select x-model="fieldOfUse" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400" required>
                                     <option value="">Select your business type...</option>
                                     <option value="sari_sari">Sari-Sari Store</option>
                                     <option value="mini_grocery">Mini Grocery</option>
@@ -441,8 +440,8 @@
 
                             <!-- Request Type -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Request Type *</label>
-                                <select x-model="requestType" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" required>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Request Type *</label>
+                                <select x-model="requestType" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400" required>
                                     <option value="">Select request type...</option>
                                     <option value="starter">Request for Starter Plan</option>
                                     <option value="additional">Request for Additional Inventory</option>
@@ -452,8 +451,8 @@
 
                             <!-- Custom Message -->
                             <div x-show="requestType === 'custom'" class="hidden">
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Your Message</label>
-                                <textarea x-model="customMessage" rows="4" class="w-full bg-white/5 border border-purple-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none" placeholder="Tell us about your request..."></textarea>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Your Message</label>
+                                <textarea x-model="customMessage" rows="4" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 resize-none placeholder-gray-400 dark:placeholder-gray-500" placeholder="Tell us about your request..."></textarea>
                             </div>
 
                             <!-- Action Buttons -->
@@ -461,13 +460,13 @@
                                 <button
                                     type="button"
                                     @click="backToHero()"
-                                    class="flex-1 bg-white/10 hover:bg-white/20 border border-purple-500/30 text-white px-4 py-2 rounded-lg font-medium transition"
+                                    class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transition"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                                    class="flex-1 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition"
                                 >
                                     Send Request
                                 </button>
@@ -481,52 +480,9 @@
         </div>
     </div>
 
-    <!-- Theme Toggle Script -->
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const themeIcon = document.getElementById('themeIcon');
-
-            if (html.classList.contains('light')) {
-                // Switch to dark mode
-                html.classList.remove('light');
-                localStorage.setItem('theme', 'dark');
-                themeIcon.textContent = '⏸️';
-            } else {
-                // Switch to light mode
-                html.classList.add('light');
-                localStorage.setItem('theme', 'light');
-                themeIcon.textContent = '▶️';
-            }
-        }
-
-        // Update theme button on page load
-        function updateThemeButton() {
-            const html = document.documentElement;
-            const themeIcon = document.getElementById('themeIcon');
-
-            if (html.classList.contains('light')) {
-                themeIcon.textContent = '▶️';
-            } else {
-                themeIcon.textContent = '⏸️';
-            }
-        }        // Initialize theme button on page load
-        document.addEventListener('DOMContentLoaded', updateThemeButton);
-
-        // Keyboard shortcut: Press 'T' to toggle theme
-        document.addEventListener('keydown', function(e) {
-            if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey) {
-                // Only toggle if not typing in an input field
-                if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                    toggleTheme();
-                }
-            }
-        });
-    </script>
-
     <!-- Footer -->
-    <footer class="mt-20 py-6 border-t border-purple-500/20">
-        <div class="max-w-6xl mx-auto px-6 text-center text-gray-400 text-sm">
+    <footer class="mt-20 py-6 border-t border-purple-500/20 bg-white dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto px-6 text-center text-gray-600 dark:text-gray-400 text-sm">
             <p>Inventory Management System &copy; 2025</p>
         </div>
     </footer>

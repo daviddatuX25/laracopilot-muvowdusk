@@ -11,7 +11,7 @@ class ProductLookup extends Component
 {
     public $searchQuery = '';
     public $manualBarcode = '';
-    public $foundProduct = null;
+    public $foundProductData = [];
     public $notFound = false;
     public $barcodeForCreate = '';
     public $showManualInput = false;
@@ -35,7 +35,7 @@ class ProductLookup extends Component
 
         $inventoryId = AuthHelper::inventory();
         $this->searchQuery = $barcode;
-        $this->foundProduct = null;
+        $this->foundProductData = [];
         $this->notFound = false;
 
         $product = Product::where('inventory_id', $inventoryId)
@@ -51,7 +51,16 @@ class ProductLookup extends Component
             $this->barcodeForCreate = $barcode;
             session()->flash('error', 'Product not found: ' . $barcode);
         } else {
-            $this->foundProduct = $product;
+            $this->foundProductData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'current_stock' => $product->current_stock,
+                'reorder_level' => $product->reorder_level,
+                'category_name' => $product->category->name ?? 'N/A',
+                'supplier_name' => $product->supplier->name ?? 'N/A',
+            ];
             session()->flash('success', 'Product found: ' . $product->name);
         }
     }
@@ -73,7 +82,7 @@ class ProductLookup extends Component
         }
 
         $inventoryId = AuthHelper::inventory();
-        $this->foundProduct = null;
+        $this->foundProductData = [];
         $this->notFound = false;
 
         $product = Product::where('inventory_id', $inventoryId)
@@ -89,7 +98,16 @@ class ProductLookup extends Component
             $this->notFound = true;
             $this->barcodeForCreate = $this->searchQuery;
         } else {
-            $this->foundProduct = $product;
+            $this->foundProductData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'current_stock' => $product->current_stock,
+                'reorder_level' => $product->reorder_level,
+                'category_name' => $product->category->name ?? 'N/A',
+                'supplier_name' => $product->supplier->name ?? 'N/A',
+            ];
         }
     }
 
@@ -103,7 +121,7 @@ class ProductLookup extends Component
     {
         $this->searchQuery = '';
         $this->manualBarcode = '';
-        $this->foundProduct = null;
+        $this->foundProductData = [];
         $this->notFound = false;
         $this->barcodeForCreate = '';
         session()->forget('error');

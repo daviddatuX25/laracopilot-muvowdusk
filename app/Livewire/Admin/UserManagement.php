@@ -14,6 +14,7 @@ class UserManagement extends Component
     use WithPagination;
 
     public $search = '';
+    public $viewMode = 'table';
     public $showForm = false;
     public $editingUserId = null;
 
@@ -34,6 +35,11 @@ class UserManagement extends Component
         return view('livewire.admin.user-management', [
             'users' => $users,
         ]);
+    }
+
+    public function toggleView()
+    {
+        $this->viewMode = $this->viewMode === 'table' ? 'card' : 'table';
     }
 
     public function openForm()

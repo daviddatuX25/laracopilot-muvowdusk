@@ -17,7 +17,7 @@ class StockAdjustment extends Component
     public $search = '';
     public $products = [];
     public $selectedProductId;
-    public $selectedProduct;
+    public $selectedProductData = [];
     public $quantity = '';
     public $reason;
     public $presetQuantities = [1, 5, 10];
@@ -43,8 +43,17 @@ class StockAdjustment extends Component
             return;
         }
 
+        // Clear selected product if user is searching for a new one
+        if (!empty($this->search) && !empty($this->selectedProductData) &&
+            !str_contains(strtolower($this->selectedProductData['name'] ?? ''), strtolower($this->search)) &&
+            !str_contains($this->selectedProductData['sku'] ?? '', $this->search) &&
+            !str_contains($this->selectedProductData['barcode'] ?? '', $this->search ?? '')) {
+            $this->selectedProductId = null;
+            $this->selectedProductData = [];
+        }
+
         $inventoryId = AuthHelper::inventory();
-        $this->products = Product::where('inventory_id', $inventoryId)
+        $products = Product::where('inventory_id', $inventoryId)
             ->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('sku', 'like', '%' . $this->search . '%')
@@ -53,14 +62,15 @@ class StockAdjustment extends Component
             ->limit(10)
             ->get();
 
-        // Clear selected product if user is searching for a new one
-        if (!empty($this->search) && $this->selectedProduct &&
-            !str_contains(strtolower($this->selectedProduct->name), strtolower($this->search)) &&
-            !str_contains($this->selectedProduct->sku, $this->search) &&
-            !str_contains($this->selectedProduct->barcode, $this->search ?? '')) {
-            $this->selectedProductId = null;
-            $this->selectedProduct = null;
-        }
+        // Convert to arrays for serialization
+        $this->products = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'sku' => $p->sku,
+                'current_stock' => $p->current_stock,
+            ];
+        })->toArray();
 
         // Auto-select on exact match
         $this->checkForExactMatch();
@@ -76,10 +86,10 @@ class StockAdjustment extends Component
 
         // Check for exact match on barcode or SKU
         foreach ($this->products as $product) {
-            if (strtolower($product->barcode ?? '') === strtolower($this->search) ||
-                strtolower($product->sku ?? '') === strtolower($this->search)) {
+            if (strtolower($product['barcode'] ?? '') === strtolower($this->search) ||
+                strtolower($product['sku'] ?? '') === strtolower($this->search)) {
                 // Exact match found, auto-select it (show toast for auto-select)
-                $this->selectProduct($product->id);
+                $this->selectProduct($product['id']);
                 return;
             }
         }
@@ -112,17 +122,29 @@ class StockAdjustment extends Component
     public function selectProduct($productId)
     {
         $inventoryId = AuthHelper::inventory();
-        $this->selectedProductId = $productId;
-        $this->selectedProduct = Product::where('inventory_id', $inventoryId)->find($productId);
-        $this->search = $this->selectedProduct->name;
-        $this->products = [];
+        $product = Product::where('inventory_id', $inventoryId)->find($productId);
 
-        // Dispatch success toast
-        $this->dispatch('toast', type: 'success', message: 'Product loaded: ' . $this->selectedProduct->name);
+        if ($product) {
+            $this->selectedProductId = $productId;
+            $this->selectedProductData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'current_stock' => $product->current_stock,
+                'reorder_level' => $product->reorder_level,
+                'category_name' => $product->category->name ?? 'N/A',
+            ];
+            $this->search = $product->name;
+            $this->products = [];
+
+            // Dispatch success toast
+            $this->dispatch('toast', type: 'success', message: 'Product loaded: ' . $product->name);
+        }
     }    public function clearProductSelection()
     {
         $this->selectedProductId = null;
-        $this->selectedProduct = null;
+        $this->selectedProductData = [];
         $this->search = '';
         $this->products = [];
         $this->quantity = '';
@@ -244,7 +266,7 @@ class StockAdjustment extends Component
 
             DB::commit();
 
-            $this->reset(['search', 'selectedProductId', 'selectedProduct', 'quantity', 'reason', 'customQuantity']);
+            $this->reset(['search', 'selectedProductId', 'selectedProductData', 'quantity', 'reason', 'customQuantity']);
 
             // Dispatch success AFTER reset to avoid validation error showing
             $this->dispatch('toast', type: 'success', message: 'Stock adjusted successfully!');

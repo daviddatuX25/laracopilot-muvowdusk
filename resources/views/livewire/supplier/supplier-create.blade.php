@@ -1,67 +1,83 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             {{ __('Create Supplier') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                    <h1 class="text-2xl font-semibold text-gray-800">Create New Supplier</h1>
+            <x-inventory.card.card>
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Create New Supplier</h1>
 
-                    <form wire:submit.prevent="save" class="mt-6 space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Supplier Name</label>
-                                <div class="mt-1">
-                                    <input type="text" id="name" wire:model.lazy="name" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                @error('name') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="contact_person" class="block text-sm font-medium text-gray-700">Contact Person (optional)</label>
-                                <div class="mt-1">
-                                    <input type="text" id="contact_person" wire:model.lazy="contact_person" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                @error('contact_person') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700">Email (optional)</label>
-                                <div class="mt-1">
-                                    <input type="email" id="email" wire:model.lazy="email" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                @error('email') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700">Phone (optional)</label>
-                                <div class="mt-1">
-                                    <input type="text" id="phone" wire:model.lazy="phone" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                @error('phone') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                            </div>
+                <form wire:submit.prevent="save" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <x-inventory.form.form-input
+                                id="name"
+                                name="name"
+                                wire:model.lazy="name"
+                                label="Supplier Name"
+                                placeholder="Enter supplier name"
+                            />
+                            @error('name') <span class="text-red-500 text-xs italic block mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
-                            <label for="address" class="block text-sm font-medium text-gray-700">Address (optional)</label>
-                            <div class="mt-1">
-                                <textarea id="address" wire:model.lazy="address" rows="3" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-                            </div>
-                            @error('address') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                            <x-inventory.form.form-input
+                                id="contact_person"
+                                name="contact_person"
+                                wire:model.lazy="contact_person"
+                                label="Contact Person"
+                                placeholder="Enter contact person (optional)"
+                            />
+                            @error('contact_person') <span class="text-red-500 text-xs italic block mt-1">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="flex items-center justify-end space-x-4">
-                            <a href="{{ route('suppliers.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Cancel
-                            </a>
-                            <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Save Supplier
-                            </button>
+                        <div>
+                            <x-inventory.form.form-input
+                                id="email"
+                                name="email"
+                                type="email"
+                                wire:model.lazy="email"
+                                label="Email"
+                                placeholder="Enter email (optional)"
+                            />
+                            @error('email') <span class="text-red-500 text-xs italic block mt-1">{{ $message }}</span> @enderror
                         </div>
-                    </form>
-                </div>
-            </div>
+
+                        <div>
+                            <x-inventory.form.form-input
+                                id="phone"
+                                name="phone"
+                                wire:model.lazy="phone"
+                                label="Phone"
+                                placeholder="Enter phone (optional)"
+                            />
+                            @error('phone') <span class="text-red-500 text-xs italic block mt-1">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-inventory.form.form-textarea
+                            id="address"
+                            name="address"
+                            wire:model.lazy="address"
+                            label="Address"
+                            placeholder="Enter address (optional)"
+                            rows="3"
+                        />
+                        @error('address') <span class="text-red-500 text-xs italic block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <a href="{{ route('suppliers.index') }}">
+                            <x-inventory.button.button variant="outline">Cancel</x-inventory.button.button>
+                        </a>
+                        <x-inventory.button.button variant="primary" type="submit">Save Supplier</x-inventory.button.button>
+                    </div>
+                </form>
+            </x-inventory.card.card>
         </div>
     </div>
 </div>

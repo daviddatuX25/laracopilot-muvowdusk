@@ -1,107 +1,29 @@
 @import "tailwindcss";
 
 /* ========================================
-   LIGHT MODE (Default Theme)
+   ALPINE.JS UTILITIES
    ======================================== */
-:root {
-  /* Primary Colors - Indigo */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
 
-  /* Secondary Colors - Red */
-  --color-secondary: #dc2626;
-  --color-secondary-hover: #b91c1c;
-
-  /* Accent Colors - Violet */
-  --color-accent: #a855f7;
-  --color-accent-hover: #9333ea;
-
-  /* Background Colors */
-  --color-background: #f3f4f6;
-  --color-background-secondary: #f9fafb;
-
-  /* Surface Colors */
-  --color-surface: #ffffff;
-  --color-surface-hover: #f9fafb;
-
-  /* Text Colors */
-  --color-text: #111827;
-  --color-text-secondary: #6b7280;
-
-  /* Border Colors */
-  --color-border: #d1d5db;
-  --color-border-light: #e5e7eb;
+/* Prevent flickering of Alpine components during initialization */
+[x-cloak] {
+  display: none !important;
 }
 
 /* ========================================
-   DARK MODE Theme
+   CUSTOM UTILITIES
    ======================================== */
-.dark {
-  /* Primary Colors - Indigo (adjusted for dark) */
-  --color-primary: #6366f1;
-  --color-primary-hover: #818cf8;
 
-  /* Secondary Colors - Red (adjusted for dark) */
-  --color-secondary: #ef4444;
-  --color-secondary-hover: #dc2626;
-
-  /* Accent Colors - Violet (adjusted for dark) */
-  --color-accent: #a855f7;
-  --color-accent-hover: #c084fc;
-
-  /* Background Colors */
-  --color-background: #0f172a;
-  --color-background-secondary: #1e293b;
-
-  /* Surface Colors */
-  --color-surface: #1e293b;
-  --color-surface-hover: #334155;
-
-  /* Text Colors */
-  --color-text: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-
-  /* Border Colors */
-  --color-border: #475569;
-  --color-border-light: #64748b;
+/* Scrollbar Hiding - for tables with horizontal scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* ========================================
-   CUSTOM THEME - Purple/Violet (Optional)
-   ======================================== */
-.theme-purple {
-  /* Primary Colors - Purple */
-  --color-primary: #7c3aed;
-  --color-primary-hover: #6d28d9;
-
-  /* Secondary Colors - Pink */
-  --color-secondary: #ec4899;
-  --color-secondary-hover: #db2777;
-
-  /* Accent Colors - Fuchsia */
-  --color-accent: #d946ef;
-  --color-accent-hover: #c026d3;
-
-  /* Background Colors */
-  --color-background: #f5f3ff;
-  --color-background-secondary: #faf5ff;
-
-  /* Surface Colors */
-  --color-surface: #fef3ff;
-  --color-surface-hover: #f3e8ff;
-
-  /* Text Colors */
-  --color-text: #3f0f5c;
-  --color-text-secondary: #6b21a8;
-
-  /* Border Colors */
-  --color-border: #e9d5ff;
-  --color-border-light: #f3e8ff;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-/* ========================================
-   SMOOTH TRANSITIONS
-   ======================================== */
+/* Smooth Transitions */
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }

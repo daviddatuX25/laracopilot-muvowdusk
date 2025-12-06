@@ -310,7 +310,7 @@ DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sku` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sku` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `barcode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `category_id` bigint unsigned DEFAULT NULL,
   `supplier_id` bigint unsigned DEFAULT NULL,
@@ -324,7 +324,6 @@ CREATE TABLE `products` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `products_sku_unique` (`sku`),
   UNIQUE KEY `products_barcode_unique` (`barcode`),
   KEY `products_inventory_id_index` (`inventory_id`),
   KEY `products_category_id_index` (`category_id`),

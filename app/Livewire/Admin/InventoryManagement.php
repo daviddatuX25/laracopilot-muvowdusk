@@ -13,6 +13,7 @@ class InventoryManagement extends Component
     use WithPagination;
 
     public $search = '';
+    public $viewMode = 'table';
     public $showForm = false;
     public $editingInventoryId = null;
 
@@ -30,6 +31,12 @@ class InventoryManagement extends Component
         return view('livewire.admin.inventory-management', [
             'inventories' => $inventories,
         ]);
+    }
+
+    public function toggleView()
+    {
+        $this->viewMode = $this->viewMode === 'table' ? 'card' : 'table';
+        $this->dispatch('viewModeChanged', mode: $this->viewMode);
     }
 
     public function openForm()

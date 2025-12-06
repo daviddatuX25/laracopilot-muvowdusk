@@ -15,6 +15,7 @@ class UserInventoryLink extends Component
     use WithPagination;
 
     public $search = '';
+    public $inventorySearch = '';
     public $selectedUserId = null;
     public $selectedInventoryIds = [];
 
@@ -24,7 +25,9 @@ class UserInventoryLink extends Component
             ->orWhere('name', 'like', '%' . $this->search . '%')
             ->paginate(10);
 
-        $inventories = Inventory::orderBy('name')->get();
+        $inventories = Inventory::where('name', 'like', '%' . $this->inventorySearch . '%')
+            ->orderBy('name')
+            ->get();
 
         $currentLinks = [];
         if ($this->selectedUserId) {

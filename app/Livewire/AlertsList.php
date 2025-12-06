@@ -12,6 +12,13 @@ class AlertsList extends Component
 {
     use WithPagination;
 
+    public $viewMode = 'table';
+
+    public function toggleView()
+    {
+        $this->viewMode = $this->viewMode === 'table' ? 'card' : 'table';
+    }
+
     #[On('public')]
     public function refreshAlerts()
     {

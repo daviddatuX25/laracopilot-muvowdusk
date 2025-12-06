@@ -14,9 +14,12 @@ class FullInventoryReport extends Component
 {
     use WithPagination, BaseReportTrait;
 
+    public $search = '';
+    public $filterCategory = '';
+    public $filterSupplier = '';
     public $filterStockStatus = '';
     public $showModal = false;
-    public $modalProduct = null;
+    public $modalProductData = null;
     public $modalMovements = [];
 
     protected $queryString = [
@@ -95,18 +98,34 @@ class FullInventoryReport extends Component
     public function showProductModal($productId)
     {
         $inventoryId = AuthHelper::inventory();
-        $this->modalProduct = Product::where('inventory_id', $inventoryId)->with(['category', 'supplier'])->find($productId);
-        $this->modalMovements = \App\Models\StockMovement::where('product_id', $productId)
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
-        $this->showModal = true;
+        $product = Product::where('inventory_id', $inventoryId)->with(['category', 'supplier'])->find($productId);
+
+        if ($product) {
+            $this->modalProductData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'current_stock' => $product->current_stock,
+                'reorder_level' => $product->reorder_level,
+                'category_name' => $product->category->name ?? 'N/A',
+                'supplier_name' => $product->supplier->name ?? 'N/A',
+                'cost_price' => $product->cost_price,
+                'selling_price' => $product->selling_price,
+                'description' => $product->description,
+            ];
+            $this->modalMovements = \App\Models\StockMovement::where('product_id', $productId)
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+            $this->showModal = true;
+        }
     }
 
     public function closeModal()
     {
         $this->showModal = false;
-        $this->modalProduct = null;
+        $this->modalProductData = null;
         $this->modalMovements = [];
     }
 

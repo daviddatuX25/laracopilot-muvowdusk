@@ -11,7 +11,7 @@ class BarcodeScanner extends Component
 {
     public $scannedBarcode = '';
     public $manualBarcode = '';
-    public $foundProduct = null;
+    public $foundProductData = [];
     public $showManualInput = false;
     public $useCameraScanner = false;
 
@@ -37,17 +37,27 @@ class BarcodeScanner extends Component
         $inventoryId = AuthHelper::inventory();
         $this->scannedBarcode = $barcode;
 
-        $this->foundProduct = Product::where('inventory_id', $inventoryId)
+        $product = Product::where('inventory_id', $inventoryId)
             ->where(function ($q) use ($barcode) {
                 $q->where('barcode', $barcode)
                   ->orWhere('sku', $barcode);
             })
             ->first();
 
-        if (!$this->foundProduct) {
+        if (!$product) {
+            $this->foundProductData = [];
             session()->flash('error', 'Product not found: ' . $barcode);
         } else {
-            session()->flash('success', 'Product found: ' . $this->foundProduct->name);
+            $this->foundProductData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'current_stock' => $product->current_stock,
+                'reorder_level' => $product->reorder_level,
+                'category_name' => $product->category->name ?? 'N/A',
+            ];
+            session()->flash('success', 'Product found: ' . $product->name);
         }
     }
 
@@ -65,7 +75,7 @@ class BarcodeScanner extends Component
     {
         $this->scannedBarcode = '';
         $this->manualBarcode = '';
-        $this->foundProduct = null;
+        $this->foundProductData = [];
 
         session()->forget('error');
         session()->forget('success');

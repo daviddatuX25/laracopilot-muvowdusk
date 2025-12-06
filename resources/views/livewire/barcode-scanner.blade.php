@@ -24,18 +24,18 @@
     </div>
 
     {{-- Product Result Section --}}
-    @if ($foundProduct)
+    @if (!empty($foundProductData))
         <div class="mt-6 p-4 border rounded bg-green-50">
-            <h3 class="font-bold text-lg mb-2">✓ Found Product: {{ $foundProduct->name }}</h3>
+            <h3 class="font-bold text-lg mb-2">✓ Found Product: {{ $foundProductData['name'] }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <p class="text-gray-700"><strong>SKU:</strong> {{ $foundProduct->sku }}</p>
-                    <p class="text-gray-700"><strong>Barcode:</strong> {{ $foundProduct->barcode ?? 'N/A' }}</p>
-                    <p class="text-gray-700"><strong>Current Stock:</strong> <span class="font-bold text-lg">{{ $foundProduct->current_stock }}</span></p>
-                    <p class="text-gray-700"><strong>Category:</strong> {{ $foundProduct->category->name }}</p>
-                    <p class="text-gray-700"><strong>Supplier:</strong> {{ $foundProduct->supplier->name ?? 'N/A' }}</p>
+                    <p class="text-gray-700"><strong>SKU:</strong> {{ $foundProductData['sku'] }}</p>
+                    <p class="text-gray-700"><strong>Barcode:</strong> {{ $foundProductData['barcode'] ?? 'N/A' }}</p>
+                    <p class="text-gray-700"><strong>Current Stock:</strong> <span class="font-bold text-lg">{{ $foundProductData['current_stock'] }}</span></p>
+                    <p class="text-gray-700"><strong>Category:</strong> {{ $foundProductData['category_name'] }}</p>
+                    <p class="text-gray-700"><strong>Supplier:</strong> {{ $foundProductData['supplier_name'] ?? 'N/A' }}</p>
                 </div>
-                @if ($foundProduct->image_path)
+                @if (!empty($foundProductData) && false) {{-- Image removed for serialization --}}
                     <div class="flex justify-center items-center">
                         <img src="{{ asset('storage/' . $foundProduct->image_path) }}" alt="{{ $foundProduct->name }}" class="w-32 h-32 object-cover rounded-lg">
                     </div>
