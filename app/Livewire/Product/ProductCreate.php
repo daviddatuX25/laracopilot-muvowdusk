@@ -31,7 +31,7 @@ class ProductCreate extends Component
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'sku' => 'required|string|max:50|unique:products',
+        'sku' => 'nullable|string|max:50|unique:products',
         'barcode' => 'nullable|string|max:50|unique:products',
         'category_id' => 'nullable|exists:categories,id',
         'supplier_id' => 'nullable|exists:suppliers,id',

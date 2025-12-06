@@ -73,7 +73,7 @@
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
-                                                        <div class="text-sm text-gray-500">{{ $product->category->name }}</div>
+                                                        <div class="text-sm text-gray-500">{{ $product->category?->name ?? 'No Category' }}</div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-900">{{ $product->sku }}</div>
@@ -111,7 +111,7 @@
                                                 <!-- Product Name & Category -->
                                                 <div class="mb-3">
                                                     <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">{{ $product->name }}</h3>
-                                                    <p class="text-sm text-gray-500">{{ $product->category->name }}</p>
+                                                    <p class="text-sm text-gray-500">{{ $product->category?->name ?? 'No Category' }}</p>
                                                 </div>
 
                                                 <!-- Product Details Grid -->

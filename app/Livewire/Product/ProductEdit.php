@@ -47,7 +47,7 @@ class ProductEdit extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:50',
+            'sku' => 'nullable|string|max:50',
             'barcode' => 'nullable|string|max:50',
             'category_id' => 'nullable|exists:categories,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
