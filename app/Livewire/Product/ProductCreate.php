@@ -43,6 +43,16 @@ class ProductCreate extends Component
         'image' => 'nullable|image|max:2048', // Max 2MB
     ];
 
+    public function updated($propertyName)
+    {
+        // Convert empty strings to null for nullable fields
+        if (in_array($propertyName, ['category_id', 'supplier_id', 'barcode', 'description'])) {
+            if ($this->$propertyName === '') {
+                $this->$propertyName = null;
+            }
+        }
+    }
+
     public function mount(Request $request)
     {
         // Check if barcode is provided in query string
@@ -53,6 +63,20 @@ class ProductCreate extends Component
 
     public function save()
     {
+        // Convert empty strings to null before validation
+        if ($this->category_id === '') {
+            $this->category_id = null;
+        }
+        if ($this->supplier_id === '') {
+            $this->supplier_id = null;
+        }
+        if ($this->barcode === '') {
+            $this->barcode = null;
+        }
+        if ($this->description === '') {
+            $this->description = null;
+        }
+
         $this->validate();
 
         if (empty($this->barcode)) {
