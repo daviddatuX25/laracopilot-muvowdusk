@@ -132,6 +132,12 @@
                     @else
                         <h1 class="text-lg font-semibold text-gray-900 sm:hidden">Inventory</h1>
                     @endif
+                    @if(auth()->check())
+                        @php
+                            $currentInventoryName = session('selected_inventory_name', 'Inventory');
+                        @endphp
+                        <span class="ml-2 text-sm font-medium text-gray-600 sm:hidden">({{ $currentInventoryName }})</span>
+                    @endif
                 </div>
 
                 <!-- Notification Center & Greeting -->
@@ -166,16 +172,26 @@
                     <!-- Greeting -->
                     <div class="text-gray-700 font-medium text-sm hidden sm:block">
                         {{ auth()->check() ? 'Welcome, ' . auth()->user()->userid : 'Welcome to Inventory System' }}
+                        @if(auth()->check())
+                            @php
+                                $currentInventoryName = session('selected_inventory_name', 'Inventory');
+                            @endphp
+                            <span class="ml-2 text-indigo-600">{{ $currentInventoryName }}</span>
+                        @endif
                     </div>
 
                     <!-- Logout Button -->
                     @auth
-                        <form method="POST" action="{{ route('auth.logout') }}" class="inline">
+                        <form method="POST" action="{{ route('auth.logout') }}" class="hidden sm:inline">
                             @csrf
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                 Logout
                             </button>
                         </form>
+                        <!-- Lobby Link for Mobile -->
+                        <a href="{{ route('inventory.lobby') }}" class="sm:hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm">
+                            🏠 Lobby
+                        </a>
                     @endauth
                 </div>
             </div>
