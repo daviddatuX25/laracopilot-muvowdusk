@@ -94,14 +94,15 @@ class ProductEdit extends Component
 
             if ($response['success']) {
                 $this->dispatch('product-updated');
-                session()->flash('message', 'Product updated successfully.');
+                session()->flash('toast_message', 'Product updated successfully.');
+                session()->flash('toast_type', 'success');
                 return redirect()->route('products.index', ['time' => time()]);
             } else {
-                session()->flash('error', $response['message'] ?? 'Failed to update product.');
+                $this->dispatch('toast', type: 'error', message: $response['message'] ?? 'Failed to update product.');
                 return back();
             }
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to update product: ' . $e->getMessage());
+            $this->dispatch('toast', type: 'error', message: 'Failed to update product: ' . $e->getMessage());
             return back();
         }
     }

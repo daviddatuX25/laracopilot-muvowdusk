@@ -15,7 +15,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
+        <h2 class="font-semibold text-xl text-white dark:text-violet-100 leading-tight">
             {{ __('Suppliers') }}
         </h2>
     </x-slot>
@@ -46,10 +46,6 @@
                         </a>
                     </div>
                 </div>
-
-                @if (session()->has('message'))
-                    <x-inventory.state.success-message>{{ session('message') }}</x-inventory.state.success-message>
-                @endif
 
                 <div class="mt-6">
                     <!-- Search Bar -->

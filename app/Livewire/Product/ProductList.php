@@ -49,6 +49,6 @@ class ProductList extends Component
             Storage::disk('public')->delete($product->image_path);
         }
         $product->delete();
-        session()->flash('message', 'Product deleted successfully.');
+        $this->dispatch('toast', type: 'success', message: 'Product deleted successfully.');
     }
 }

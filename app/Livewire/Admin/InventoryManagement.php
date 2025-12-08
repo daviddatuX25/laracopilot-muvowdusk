@@ -82,10 +82,10 @@ class InventoryManagement extends Component
 
         if ($this->editingInventoryId) {
             Inventory::findOrFail($this->editingInventoryId)->update($validated);
-            session()->flash('message', 'Inventory updated successfully.');
+            $this->dispatch('toast', type: 'success', message: 'Inventory updated successfully.');
         } else {
             Inventory::create($validated);
-            session()->flash('message', 'Inventory created successfully.');
+            $this->dispatch('toast', type: 'success', message: 'Inventory created successfully.');
         }
 
         $this->closeForm();
@@ -94,6 +94,6 @@ class InventoryManagement extends Component
     public function delete($id)
     {
         Inventory::findOrFail($id)->delete();
-        session()->flash('message', 'Inventory deleted successfully.');
+        $this->dispatch('toast', type: 'success', message: 'Inventory deleted successfully.');
     }
 }

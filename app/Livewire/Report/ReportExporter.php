@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Report;
 
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportExporter
 {
@@ -17,7 +17,7 @@ class ReportExporter
     public static function exportCsv($headers, $rows, $filename)
     {
         $csv = implode(',', array_map(fn($h) => '"' . addslashes($h) . '"', $headers)) . "\n";
-        
+
         foreach ($rows as $row) {
             $values = [];
             foreach ($headers as $header) {
@@ -38,17 +38,17 @@ class ReportExporter
     public static function exportMultiSectionCsv($sections, $filename)
     {
         $csv = '';
-        
+
         foreach ($sections as $section) {
             if ($csv !== '') {
                 $csv .= "\n\n";
             }
-            
+
             $csv .= $section['title'] . "\n";
-            
+
             if (!empty($section['headers'])) {
                 $csv .= implode(',', array_map(fn($h) => '"' . addslashes($h) . '"', $section['headers'])) . "\n";
-                
+
                 foreach ($section['rows'] as $row) {
                     $values = [];
                     foreach ($section['headers'] as $header) {

@@ -2,31 +2,59 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Full Inventory Report</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { width: 100%; overflow-x: hidden; }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: DejaVu Sans, Arial, sans-serif;
+            width: 100%;
+            overflow-x: hidden;
+            padding: 0.5in;
+            max-width: 7.5in;
+            margin: 0 auto;
         }
         h1 {
             text-align: center;
             color: #333;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
         .summary {
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
             color: #666;
+            font-size: 12px;
         }
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+            gap: 10px;
+            margin: 15px 0;
         }
         .summary-item {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
+            font-size: 11px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 11px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
         }
         .summary-item label {
             font-weight: bold;

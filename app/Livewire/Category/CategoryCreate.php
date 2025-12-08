@@ -31,7 +31,8 @@ class CategoryCreate extends Component
 
         $this->dispatch('category-created');
 
-        session()->flash('message', 'Category created successfully.');
+        session()->flash('toast_message', 'Category created successfully.');
+        session()->flash('toast_type', 'success');
 
         return redirect()->route('categories.index', ['time' => time()]);
     }

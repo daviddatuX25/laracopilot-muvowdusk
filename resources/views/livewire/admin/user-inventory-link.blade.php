@@ -2,18 +2,6 @@
     <div class="px-4 py-6 sm:px-0">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">User-Inventory Links</h1>
 
-        @if (session()->has('message'))
-            <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
-                <p class="text-green-800 dark:text-green-300">{{ session('message') }}</p>
-            </div>
-        @endif
-
-        @if (session()->has('error'))
-            <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
-                <p class="text-red-800 dark:text-red-300">{{ session('error') }}</p>
-            </div>
-        @endif
-
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Users List -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">

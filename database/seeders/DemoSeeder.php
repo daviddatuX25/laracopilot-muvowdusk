@@ -23,40 +23,48 @@ class DemoSeeder extends Seeder
         // ============================================
 
         // Instructor Zeus - Admin
-        $zeus = User::create([
-            'userid' => 'zeus',
-            'name' => 'Zeus Instructor',
-            'email' => 'zeus@inventory.local',
-            'password' => Hash::make('zeus123'),
-            'is_admin' => false,
-        ]);
+        $zeus = User::firstOrCreate(
+            ['userid' => 'zeus'],
+            [
+                'name' => 'Zeus Instructor',
+                'email' => 'zeus@inventory.local',
+                'password' => Hash::make('zeus123'),
+                'is_admin' => false,
+            ]
+        );
 
         // Instructor Zeus - Admin Account
-        $zeusAdmin = User::create([
-            'userid' => 'zeusadmin',
-            'name' => 'Zeus Admin',
-            'email' => 'zeusadmin@inventory.local',
-            'password' => Hash::make('zeusadmin123'),
-            'is_admin' => true,
-        ]);
+        $zeusAdmin = User::firstOrCreate(
+            ['userid' => 'zeusadmin'],
+            [
+                'name' => 'Zeus Admin',
+                'email' => 'zeusadmin@inventory.local',
+                'password' => Hash::make('zeusadmin123'),
+                'is_admin' => true,
+            ]
+        );
 
         // Super Admin - For Development
-        $superAdmin = User::create([
-            'userid' => 'superadmin',
-            'name' => 'Super Administrator',
-            'email' => 'superadmin@inventory.local',
-            'password' => Hash::make('spidyweb123'),
-            'is_admin' => true,
-        ]);
+        $superAdmin = User::firstOrCreate(
+            ['userid' => 'superadmin'],
+            [
+                'name' => 'Super Administrator',
+                'email' => 'superadmin@inventory.local',
+                'password' => Hash::make('spidyweb123'),
+                'is_admin' => true,
+            ]
+        );
 
         // Regular User
-        $regularUser = User::create([
-            'userid' => 'user',
-            'name' => 'Regular User',
-            'email' => 'user@inventory.local',
-            'password' => Hash::make('user123'),
-            'is_admin' => false,
-        ]);
+        $regularUser = User::firstOrCreate(
+            ['userid' => 'user'],
+            [
+                'name' => 'Regular User',
+                'email' => 'user@inventory.local',
+                'password' => Hash::make('user123'),
+                'is_admin' => false,
+            ]
+        );
 
         // ============================================
         // CREATE INVENTORIES FOR ZEUS

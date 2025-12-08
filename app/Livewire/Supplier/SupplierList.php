@@ -45,6 +45,6 @@ class SupplierList extends Component
         $inventoryId = AuthHelper::inventory();
         $supplier = Supplier::where('inventory_id', $inventoryId)->findOrFail($id);
         $supplier->delete();
-        session()->flash('message', 'Supplier deleted successfully.');
+        $this->dispatch('toast', type: 'success', message: 'Supplier deleted successfully.');
     }
 }

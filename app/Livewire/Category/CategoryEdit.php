@@ -38,7 +38,8 @@ class CategoryEdit extends Component
 
         $this->dispatch('category-updated');
 
-        session()->flash('message', 'Category updated successfully.');
+        session()->flash('toast_message', 'Category updated successfully.');
+        session()->flash('toast_type', 'success');
 
         return redirect()->route('categories.index', ['time' => time()]);
     }

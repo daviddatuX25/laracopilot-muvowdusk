@@ -15,23 +15,23 @@
     }
 }" class="w-full h-full">
     <!-- Trigger Button -->
-    <button @click="openModal = true" class="w-full h-full flex flex-col items-center justify-center gap-3 p-8 rounded-lg border-2 border-dashed border-blue-300 dark:border-blue-500 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition group cursor-pointer">
+    <button @click="openModal = true" class="w-full h-full flex flex-col items-center justify-center gap-3 p-8 rounded-lg border-2 border-dashed border-blue-300/50 dark:border-blue-700/50 hover:border-blue-400/80 dark:hover:border-blue-600/80 hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition group cursor-pointer backdrop-blur-sm">
         <svg class="w-12 h-12 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
         <div class="text-center">
-            <h3 class="font-bold text-gray-900 dark:text-white text-lg">Smart Lookup</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Scan or enter barcode to find or create new products.</p>
+            <h3 class="font-bold text-violet-900 dark:text-white text-lg">Smart Lookup</h3>
+            <p class="text-sm text-violet-700 dark:text-violet-100">Scan or enter barcode to find or create new products.</p>
         </div>
     </button>
 
     <!-- Modal Overlay -->
-    <div x-cloak x-show="openModal" x-transition class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4" @click.self="openModal = false">
-        <div @click.stop class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div x-cloak x-show="openModal" x-transition class="fixed inset-0 bg-black/40 dark:bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm" @click.self="openModal = false">
+        <div @click.stop class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-lg shadow-2xl border border-white/20 dark:border-gray-700/20 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             <!-- Modal Header -->
-            <div class="bg-blue-500 dark:bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
+            <div class="bg-linear-to-r from-blue-600/30 to-indigo-600/30 dark:from-blue-600/20 dark:to-indigo-600/20 backdrop-blur-sm text-violet-900 dark:text-white px-6 py-4 flex justify-between items-center border-b border-blue-200/50 dark:border-blue-800/50">
                 <h2 class="text-xl font-bold">Smart Lookup</h2>
-                <button @click="openModal = false; useCamera = false; stopZXingScanner(); $wire.clearSearch()" class="text-white hover:text-blue-100 transition">
+                <button @click="openModal = false; useCamera = false; stopZXingScanner(); $wire.clearSearch()" class="text-violet-900 dark:text-white hover:text-violet-700 dark:hover:text-violet-200 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -39,7 +39,7 @@
             </div>
 
             <!-- Modal Content -->
-            <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-white dark:bg-gray-800">
+            <div class="flex-1 overflow-y-auto p-6 space-y-4">
                 <!-- Input Section - Always Visible -->
                 <div class="space-y-3">
                     <div>

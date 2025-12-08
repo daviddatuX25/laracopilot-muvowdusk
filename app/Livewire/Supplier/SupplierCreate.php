@@ -40,7 +40,8 @@ class SupplierCreate extends Component
 
         $this->dispatch('supplier-created');
 
-        session()->flash('message', 'Supplier created successfully.');
+        session()->flash('toast_message', 'Supplier created successfully.');
+        session()->flash('toast_type', 'success');
 
         return redirect()->route('suppliers.index', ['time' => time()]);
     }

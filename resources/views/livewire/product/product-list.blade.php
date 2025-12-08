@@ -15,7 +15,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
+        <h2 class="font-semibold text-xl text-white dark:text-violet-100 leading-tight">
             {{ __('Products') }}
         </h2>
     </x-slot>
@@ -47,12 +47,6 @@
                     </div>
                 </div>
 
-                @if (session()->has('message'))
-                    <x-inventory.state.success-message type="success">
-                        {{ session('message') }}
-                    </x-inventory.state.success-message>
-                @endif
-
                 <!-- Search Bar -->
                 <x-inventory.form.form-input-with-icon
                     name="search"
@@ -77,7 +71,11 @@
                                                 @if ($product->image_path)
                                                     <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" class="w-10 h-10 object-cover rounded-full">
                                                 @else
-                                                    <div class="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold">N/A</div>
+                                                    <div class="w-10 h-10 bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/40 dark:to-purple-900/40 rounded-full flex items-center justify-center border border-violet-200 dark:border-violet-800/50">
+                                                        <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                                        </svg>
+                                                    </div>
                                                 @endif
                                             </x-inventory.table.table-cell>
                                             <x-inventory.table.table-cell>
@@ -98,6 +96,7 @@
                                                 <div class="text-sm font-medium text-gray-900 dark:text-white">₱{{ number_format($product->selling_price, 2) }}</div>
                                             </x-inventory.table.table-cell>
                                             <x-inventory.table.table-actions>
+                                                <a href="{{ route('stock-movements.adjust') }}?product_id={{ $product->id }}" class="text-orange-600 dark:text-orange-400 hover:text-orange-900 dark:hover:text-orange-300 text-sm font-medium">Modify Stock</a>
                                                 <a href="{{ route('products.edit', $product->id) }}" class="text-violet-600 dark:text-violet-400 hover:text-violet-900 dark:hover:text-violet-300 text-sm font-medium">Edit</a>
                                                 <button wire:click="delete({{ $product->id }})"
                                                         wire:confirm="Are you sure you want to delete this product?"
@@ -120,7 +119,11 @@
                                         @if ($product->image_path)
                                             <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover rounded-lg">
                                         @else
-                                            <div class="w-full h-40 bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
+                                            <div class="w-full h-40 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-lg flex items-center justify-center border border-violet-200 dark:border-violet-800/50">
+                                                <svg class="w-16 h-16 text-violet-300 dark:text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                                </svg>
+                                            </div>
                                         @endif
                                     </div>
 
@@ -158,19 +161,22 @@
                                     @endif
 
                                     <!-- Action Buttons -->
-                                    <div class="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
-                                        <a href="{{ route('products.edit', $product->id) }}" class="flex-1">
-                                            <x-inventory.button.button variant="violet-outline" size="sm" class="w-full">
-                                                Edit
-                                            </x-inventory.button.button>
+                                    <div class="flex flex-col gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <a href="{{ route('stock-movements.adjust') }}?product_id={{ $product->id }}" class="w-full">
+                                            <button class="w-full px-3 py-2 text-sm border-2 border-orange-300/50 dark:border-orange-800/50 text-orange-600 dark:text-orange-400 font-semibold rounded-lg hover:bg-orange-50/30 dark:hover:bg-orange-900/20 transition">
+                                                Modify Stock
+                                            </button>
                                         </a>
-                                        <button wire:click="delete({{ $product->id }})"
+                                        <x-inventory.button.button variant="violet-outline" size="sm" class="w-full">
+                                            <a href="{{ route('products.edit', $product->id) }}" class="block w-full">
+                                                Edit
+                                            </a>
+                                        </x-inventory.button.button>
+                                        <x-inventory.button.button wire:click="delete({{ $product->id }})"
                                                 wire:confirm="Are you sure you want to delete this product?"
-                                                class="flex-1">
-                                            <x-inventory.button.button variant="danger" size="sm" class="w-full">
-                                                Delete
-                                            </x-inventory.button.button>
-                                        </button>
+                                                variant="danger" size="sm" class="w-full">
+                                            Delete
+                                        </x-inventory.button.button>
                                     </div>
                                 </x-inventory.card.card>
                             @endforeach

@@ -12,11 +12,16 @@ class StockMovement extends Model
 
     protected $fillable = [
         'product_id',
+        'inventory_id',
         'type',
         'quantity',
         'old_stock',
         'new_stock',
         'reason',
+        'reference_id',
+        'restock_id',
+        'notes',
+        'created_by',
     ];
 
     public function product(): BelongsTo

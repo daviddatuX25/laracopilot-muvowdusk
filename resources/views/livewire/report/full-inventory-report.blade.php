@@ -1,6 +1,6 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
+        <h2 class="font-semibold text-xl text-white dark:text-violet-100 leading-tight">
             {{ __('Full Inventory Report') }}
         </h2>
     </x-slot>

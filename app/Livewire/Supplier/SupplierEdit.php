@@ -50,7 +50,8 @@ class SupplierEdit extends Component
 
         $this->dispatch('supplier-updated');
 
-        session()->flash('message', 'Supplier updated successfully.');
+        session()->flash('toast_message', 'Supplier updated successfully.');
+        session()->flash('toast_type', 'success');
 
         return redirect()->route('suppliers.index', ['time' => time()]);
     }

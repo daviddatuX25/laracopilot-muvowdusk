@@ -71,7 +71,7 @@ class UserInventoryLink extends Component
     public function saveLinks()
     {
         if (!$this->selectedUserId) {
-            session()->flash('error', 'Please select a user first.');
+            $this->dispatch('toast', type: 'error', message: 'Please select a user first.');
             return;
         }
 
@@ -86,6 +86,6 @@ class UserInventoryLink extends Component
             ]);
         }
 
-        session()->flash('message', 'User inventory links updated successfully.');
+        $this->dispatch('toast', type: 'success', message: 'User inventory links updated successfully.');
     }
 }

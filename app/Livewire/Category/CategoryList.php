@@ -44,6 +44,6 @@ class CategoryList extends Component
         $inventoryId = AuthHelper::inventory();
         $category = Category::where('inventory_id', $inventoryId)->findOrFail($id);
         $category->delete();
-        session()->flash('message', 'Category deleted successfully.');
+        $this->dispatch('toast', type: 'success', message: 'Category deleted successfully.');
     }
 }

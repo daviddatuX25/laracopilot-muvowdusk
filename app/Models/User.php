@@ -59,4 +59,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Inventory::class, 'user_inventories');
     }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
+    }
 }

@@ -11,6 +11,7 @@ use App\Livewire\Supplier\SupplierList;
 use App\Livewire\Supplier\SupplierCreate;
 use App\Livewire\Supplier\SupplierEdit;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RestockController;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\InventoryManagement;
 use App\Livewire\Admin\UserInventoryLink;
@@ -51,6 +52,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/low-stock', \App\Livewire\Report\LowStockReport::class)->name('reports.low-stock');
     Route::get('/reports/movement-history', \App\Livewire\Report\MovementHistoryReport::class)->name('reports.movement-history');
     Route::get('/reports/full-inventory', \App\Livewire\Report\FullInventoryReport::class)->name('reports.full-inventory');
+
+    // Restock Routes
+    Route::get('/restock', \App\Livewire\Restock\RestockBuilder::class)->name('restock.builder');
+    Route::get('/restock/plans/{restock}/edit', \App\Livewire\Restock\RestockBuilder::class)->name('restock.edit');
+    Route::post('/restock', [RestockController::class, 'store'])->name('restock.store');
+    Route::get('/restock/plans', [RestockController::class, 'plans'])->name('restock.plans');
+    Route::get('/restock/plans/{restock}', [RestockController::class, 'show'])->name('restock.show');
+    Route::put('/restock/plans/{restock}', [RestockController::class, 'update'])->name('restock.update');
+    Route::get('/restock/plans/{restock}/fulfill', [RestockController::class, 'fulfill'])->name('restock.fulfill');
+    Route::post('/restock/plans/{restock}/fulfill', [RestockController::class, 'confirmFulfill'])->name('restock.confirmFulfill');
+    Route::delete('/restock/plans/{restock}', [RestockController::class, 'destroy'])->name('restock.destroy');
+    Route::get('/restock/plans/{restock}/print', [RestockController::class, 'printPlan'])->name('restock.print-plan');
+    Route::get('/restock/plans/{restock}/receipt', [RestockController::class, 'printReceipt'])->name('restock.print-receipt');
 
     Route::get('/alerts', \App\Livewire\AlertsList::class)->name('alerts.index');
 

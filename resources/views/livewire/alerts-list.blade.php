@@ -17,7 +17,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
+        <h2 class="font-semibold text-xl text-white dark:text-violet-100 leading-tight">
             {{ __('Alerts') }}
             @if($totalPending > 0)
                 <span class="inline-flex items-center justify-center px-3 py-1 ml-2 text-sm font-medium text-white bg-red-600 dark:bg-red-700 rounded-full animate-pulse">
@@ -48,12 +48,6 @@
                             {{ $viewMode === 'table' ? 'Card View' : 'Table View' }}
                         </button>
                     </div>
-
-                    @if (session()->has('message'))
-                        <div class="bg-green-100 dark:bg-green-900/40 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded relative mt-4" role="alert">
-                            <span class="block sm:inline">{{ session('message') }}</span>
-                        </div>
-                    @endif
 
                     <div class="mt-6 text-gray-500 dark:text-gray-400">
                         @if ($alerts->isEmpty())

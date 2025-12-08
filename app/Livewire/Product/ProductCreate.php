@@ -111,13 +111,13 @@ class ProductCreate extends Component
             DB::commit();
 
             $this->dispatch('product-created');
-
-            session()->flash('message', 'Product created successfully.');
+            session()->flash('toast_message', 'Product created successfully.');
+            session()->flash('toast_type', 'success');
 
             return redirect()->route('products.index', ['time' => time()]);
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Failed to create product: ' . $e->getMessage());
+            $this->dispatch('toast', type: 'error', message: 'Failed to create product: ' . $e->getMessage());
             return back();
         }
     }

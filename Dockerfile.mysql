@@ -1,0 +1,18 @@
+FROM mysql:8.0
+
+# Set environment variables
+ENV MYSQL_DATABASE=u406345208_Sarmiento
+ENV MYSQL_ROOT_PASSWORD=root_password_123
+ENV MYSQL_USER=u406345208_David
+ENV MYSQL_PASSWORD=DSarmiento2025
+ENV MYSQL_ROOT_HOST=%
+
+# Copy initialization scripts if needed
+COPY ./full_database_backup_mysql.sql /docker-entrypoint-initdb.d/init.sql
+
+# Set charset and collation
+RUN echo "default-authentication-plugin=mysql_native_password" >> /etc/mysql/conf.d/mysql.cnf && \
+    echo "character-set-server=utf8mb4" >> /etc/mysql/conf.d/mysql.cnf && \
+    echo "collation-server=utf8mb4_unicode_ci" >> /etc/mysql/conf.d/mysql.cnf
+
+EXPOSE 3306

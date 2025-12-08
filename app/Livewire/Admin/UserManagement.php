@@ -101,7 +101,7 @@ class UserManagement extends Component
 
         User::create($validated);
 
-        session()->flash('message', 'User created successfully.');
+        $this->dispatch('toast', type: 'success', message: 'User created successfully.');
         $this->closeForm();
     }
 
@@ -125,13 +125,13 @@ class UserManagement extends Component
 
         $user->update($validated);
 
-        session()->flash('message', 'User updated successfully.');
+        $this->dispatch('toast', type: 'success', message: 'User updated successfully.');
         $this->closeForm();
     }
 
     public function delete($id)
     {
         User::findOrFail($id)->delete();
-        session()->flash('message', 'User deleted successfully.');
+        $this->dispatch('toast', type: 'success', message: 'User deleted successfully.');
     }
 }

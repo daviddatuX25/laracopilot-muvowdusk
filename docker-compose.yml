@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: inventory_mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: u406345208_Sarmiento
+      MYSQL_ROOT_PASSWORD: root_password_123
+      MYSQL_USER: u406345208_David
+      MYSQL_PASSWORD: DSarmiento2025
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./full_database_backup_mysql.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - inventory_network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: inventory_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: u406345208_David
+      PMA_PASSWORD: DSarmiento2025
+      PMA_ROOT_PASSWORD: root_password_123
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - inventory_network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  inventory_network:
+    driver: bridge

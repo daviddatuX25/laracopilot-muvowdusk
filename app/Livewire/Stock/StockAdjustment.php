@@ -22,6 +22,7 @@ class StockAdjustment extends Component
     public $reason;
     public $presetQuantities = [1, 5, 10];
     public $customQuantity = null;
+    public $isAdjustment = false;
 
     public function mount()
     {
@@ -216,12 +217,12 @@ class StockAdjustment extends Component
     {
         // Validate that we have required data
         if (!$this->selectedProductId) {
-            session()->flash('error', 'Please select a product');
+            $this->dispatch('toast', type: 'error', message: 'Please select a product');
             return;
         }
 
         if ($this->quantity === '' || $this->quantity === null || (int)$this->quantity === 0) {
-            session()->flash('error', 'Please select a quantity (cannot be 0)');
+            $this->dispatch('toast', type: 'error', message: 'Please select a quantity (cannot be 0)');
             return;
         }
 
@@ -238,10 +239,17 @@ class StockAdjustment extends Component
 
         $oldStock = $product->current_stock;
 
-        // Auto-detect type: positive = in, negative = out
-        $type = $this->quantity > 0 ? 'in' : 'out';
-        $amount = abs($this->quantity);
-        $newStock = $type === 'in' ? $oldStock + $amount : $oldStock - $amount;
+        // Determine type: if adjustment toggle is on, use 'adjustment', otherwise auto-detect
+        if ($this->isAdjustment) {
+            $type = 'adjustment';
+            $amount = abs($this->quantity);
+            $newStock = $this->quantity > 0 ? $oldStock + $amount : $oldStock - $amount;
+        } else {
+            // Auto-detect type: positive = in, negative = out
+            $type = $this->quantity > 0 ? 'in' : 'out';
+            $amount = abs($this->quantity);
+            $newStock = $type === 'in' ? $oldStock + $amount : $oldStock - $amount;
+        }
 
         if ($newStock < 0) {
             session()->flash('error', 'Cannot set stock to negative. Current stock: ' . $oldStock);
@@ -266,7 +274,7 @@ class StockAdjustment extends Component
 
             DB::commit();
 
-            $this->reset(['search', 'selectedProductId', 'selectedProductData', 'quantity', 'reason', 'customQuantity']);
+            $this->reset(['search', 'selectedProductId', 'selectedProductData', 'quantity', 'reason', 'customQuantity', 'isAdjustment']);
 
             // Dispatch success AFTER reset to avoid validation error showing
             $this->dispatch('toast', type: 'success', message: 'Stock adjusted successfully!');

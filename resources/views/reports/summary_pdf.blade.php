@@ -2,31 +2,43 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Inventory Summary Report</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { width: 100%; overflow-x: hidden; }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: DejaVu Sans, Arial, sans-serif;
+            width: 100%;
+            overflow-x: hidden;
+            padding: 0.5in;
+            max-width: 7.5in;
+            margin: 0 auto;
         }
         h1 {
             text-align: center;
             color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin: 12px 0;
+            font-size: 11px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
+            word-wrap: break-word;
         }
         th {
             background-color: #f2f2f2;
+            font-weight: bold;
         }
         .summary-box {
-            margin: 20px 0;
+            margin: 12px 0;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
